@@ -1,0 +1,80 @@
+/* ══════════════════════════════════════════
+   SKIN: Model C — Podobné SAM
+   Bílá + oranžová, červené VÝBOJ, plně automatický
+   ══════════════════════════════════════════ */
+body.skin-heartsine #frx-body {
+  background: linear-gradient(180deg, #f5f5f2 0%, #eeeeea 38%, #f06020 42%, #ee5500 55%, #cc4400 100%);
+  border-top: 2px solid #e8e8e4; border-left: 2px solid #e0e0dc;
+  border-right: 2px solid #aa3300; border-bottom: 3px solid #882800;
+  box-shadow: 0 14px 45px rgba(0,0,0,0.85), 0 5px 14px rgba(0,0,0,0.65),
+    inset 0 2px 0 rgba(255,255,255,0.60), inset 0 -2px 0 rgba(0,0,0,0.25);
+}
+body.skin-heartsine .frx-logo-brand::after { content: 'Podobn\00e9  SAM'; color: #1a5fa0; font-size: 12px; font-weight: 900; letter-spacing: 2px; }
+body.skin-heartsine .frx-logo-model::after { content: 'AED Trainer \00B7  Model C'; color: #555; font-size: 8px; letter-spacing: 1px; }
+body.skin-heartsine .frx-serial::after { content: 'Typ C \00B7  AED \00B7  TREN\00c1\017d\00c9R'; color: #bb5533; }
+body.skin-heartsine .conn-brand-label::after { content: 'PAD Elektrody'; color: #bb5533; font-size: 8px; letter-spacing: 1px; }
+body.skin-heartsine #ecg-canvas { display: none; }
+body.skin-heartsine #skin-alt-display {
+  display: flex; align-items: center; justify-content: center;
+  background: #f0f0ec; border: 1px solid #ddd; border-radius: 4px; height: 100%;
+}
+body.skin-heartsine #zoll-cpr-num { display: none; }
+body.skin-heartsine .alt-label::after {
+  content: 'Model C \00B7  Pln\011b  automatick\00fd  AED';
+  color: #aaa; font-size: 8px; letter-spacing: 1px; font-family: var(--font-device); text-align: center;
+}
+body.skin-heartsine #btn-on {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.22) 0%, transparent 55%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.35) 0%, transparent 50%),
+    radial-gradient(circle at 40% 35%, #1c7a3a 0%, #125c2a 50%, #0a3d1c 100%);
+  border-top: 3px solid #2d9a50; border-bottom: 3px solid #082e14;
+  border-left: 3px solid #0e4a20; border-right: 3px solid #0e4a20;
+}
+body.skin-heartsine #btn-on .btn-symbol { color: #86efac; }
+body.skin-heartsine #btn-on .btn-label { color: #86efac; }
+body.skin-heartsine #btn-on.powered {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.25) 0%, transparent 52%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.25) 0%, transparent 48%),
+    radial-gradient(circle at 40% 35%, #22c55e 0%, #16a34a 50%, #0d6630 100%);
+  box-shadow: 0 0 22px rgba(34,197,94,0.8), 0 6px 14px rgba(0,0,0,0.55),
+    inset 0 2px 3px rgba(255,255,255,0.25), inset 0 -3px 5px rgba(0,0,0,0.35);
+}
+body.skin-heartsine #btn-shock {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.08) 0%, transparent 55%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.40) 0%, transparent 50%),
+    radial-gradient(circle at 40% 35%, #991b1b 0%, #7f1d1d 50%, #5a1212 100%);
+  border-top: 3px solid #b91c1c; border-bottom: 3px solid #450a0a;
+  border-left: 3px solid #7f1d1d; border-right: 3px solid #7f1d1d;
+}
+body.skin-heartsine #btn-shock .btn-symbol { color: #fca5a5; }
+body.skin-heartsine #btn-shock.shock-ready {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.22) 0%, transparent 52%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.30) 0%, transparent 48%),
+    radial-gradient(circle at 40% 35%, #ef4444 0%, #dc2626 45%, #991b1b 100%);
+  border-top: 3px solid #fca5a5; border-bottom: 3px solid #7f1d1d;
+  box-shadow: 0 0 28px rgba(239,68,68,0.75), 0 6px 14px rgba(0,0,0,0.55),
+    inset 0 2px 3px rgba(255,255,255,0.25), inset 0 -3px 5px rgba(0,0,0,0.40);
+  animation: shock-pulse-red 0.9s infinite;
+}
+body.skin-heartsine #btn-shock.shock-ready .btn-symbol { color: #fff; }
+@keyframes shock-pulse-red {
+  0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.65), 0 6px 14px rgba(0,0,0,0.55); }
+  50% { box-shadow: 0 0 48px rgba(239,68,68,1.00), 0 6px 14px rgba(0,0,0,0.55); }
+}
+body.skin-heartsine #connectors { background: rgba(255,255,255,0.85); border: 1px solid #ddd; }
+body.skin-heartsine .connector { border: 1.5px dashed #ccc; }
+body.skin-heartsine .connector.placed { border-style: solid; border-color: #16a34a; background: rgba(220,252,231,0.9); }
+body.skin-heartsine .conn-port { background: #f8f8f6; border: 1.5px solid #bbb; }
+body.skin-heartsine .conn-pin { background: #bbb; }
+body.skin-heartsine .connector.placed .conn-pin { background: #16a34a; }
+body.skin-heartsine .pad-connector-label { color: #374151; }
+body.skin-heartsine .conn-hint { color: #888; }
+body.skin-heartsine .torso-head, body.skin-heartsine .torso-body { fill: none; stroke: #9ca3af; stroke-width: 1.5; }
+body.skin-heartsine .pad-zone { fill: #f0f0ec; stroke: #bbb; stroke-width: 1.5; stroke-dasharray: 5 3; }
+body.skin-heartsine .pad-zone:hover { stroke: #f59e0b; stroke-width: 2; }
+body.skin-heartsine .pad-zone.placed { fill: #dcfce7; stroke: #16a34a; stroke-dasharray: none; }
+body.skin-heartsine .pad-num { fill: #6b7280; }
+body.skin-heartsine .led-item span { color: #374151; }
+body.skin-heartsine .led.green { box-shadow: 0 0 12px #22c55e; }
+body.skin-heartsine .ready-label { color: #555; }
+

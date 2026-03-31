@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AED Trainer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700;900&family=IBM+Plex+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/skin-frx.css">
+  <link rel="stylesheet" href="css/skin-zoll.css">
+  <link rel="stylesheet" href="css/skin-heartsine.css">
+  <style>/* Inline styles removed — see css/ directory */
+  </style>
+</head>
+<body class="skin-frx">
+
+  <!-- SHOCK FLASH OVERLAY -->
+  <div id="shock-flash"></div>
+
+  <!-- 1. SITE-BAR -->
+  <header id="site-bar">
+    <a href="index.html" class="site-logo-link"><img src="images/logo.png" alt="AED Trainer" class="site-logo"></a>
+    <div class="skin-zone">
+      <button class="skin-btn active" data-skin="frx" onclick="setSkin('frx')" title="Podobn&eacute; FRx">
+        <span class="skin-dot" style="background:#a8b0bc"></span>FRx
+      </button>
+      <button class="skin-btn" data-skin="zoll" onclick="setSkin('zoll')" title="Podobn&eacute; ZOLL">
+        <span class="skin-dot" style="background:#2a2a2a"></span>ZOLL
+      </button>
+      <button class="skin-btn" data-skin="heartsine" onclick="setSkin('heartsine')" title="Podobn&eacute; SAM">
+        <span class="skin-dot" style="background:#f06020"></span>SAM
+      </button>
+    </div>
+    <div class="site-controls">
+      <span id="voice-quality" onclick="SpeechEngine.cycleMode()" role="button" tabindex="0"></span>
+      <button class="lang-btn active" onclick="setLang('cs')" id="lang-cs">CZ</button>
+      <button class="lang-btn" onclick="setLang('en')" id="lang-en">EN</button>
+      <a id="btn-resources" href="resources.html" target="_blank" data-i18n="resources_btn">Zdroje</a>
+      <button id="btn-donate" onclick="openDonateModal()" data-i18n-text="donate_btn">&#9829; Podporit</button>
+    </div>
+  </header>
+
+  <div id="training-banner" data-i18n="training_banner"></div>
+  <div id="voice-warning" hidden data-i18n="no_voice_warning"></div>
+
+  <!-- 2. SIMULATOR -->
+  <div id="app-container">
+
+    <!-- Left: Device -->
+    <div id="device-panel">
+      <div id="frx-body">
+        <div id="device-header">
+          <div class="frx-logo">
+            <div class="frx-logo-brand"></div>
+            <div class="frx-logo-model"></div>
+          </div>
+          <div class="ready-zone">
+            <div id="led-ready" class="led"></div>
+            <span class="ready-label" data-i18n="led_ready">READY</span>
+          </div>
+        </div>
+
+        <div id="ecg-display">
+          <canvas id="ecg-canvas"></canvas>
+          <div id="skin-alt-display">
+            <span id="zoll-cpr-num">--</span>
+            <span class="alt-label"></span>
+          </div>
+        </div>
+
+        <div id="pad-diagram">
+          <div id="pad-mode-switch">
+            <button class="pad-mode-btn active" onclick="setPadMode('adult')" data-i18n="pad_mode_adult" data-mode="adult">Dosp\u011bl\u00fd</button>
+            <button class="pad-mode-btn" onclick="setPadMode('child')" data-i18n="pad_mode_child" data-mode="child">D\u00edt\u011b</button>
+          </div>
+          <!-- SVG Adult: antero-lateral placement -->
+          <svg viewBox="0 0 390 130" id="pad-svg-adult" class="pad-svg active">
+            <ellipse class="torso-head" cx="195" cy="22" rx="22" ry="20"/>
+            <path class="torso-body" d="M155,45 Q140,52 138,75 L136,125 Q160,132 195,132 Q230,132 254,125 L252,75 Q250,52 235,45 Q215,38 195,38 Q175,38 155,45 Z"/>
+            <path class="pad-cable" id="cable1" d="M162,125 C162,115 155,100 162,62" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
+            <path class="pad-cable" id="cable2" d="M244,125 C244,115 248,105 244,100" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
+            <rect class="pad-zone" id="pad1-zone" x="140" y="44" width="44" height="36" rx="6"
+                  onclick="connectPad(1)" ontouchend="connectPad(1); event.preventDefault()"/>
+            <rect class="pad-zone" id="pad2-zone" x="222" y="82" width="44" height="36" rx="6"
+                  onclick="connectPad(2)" ontouchend="connectPad(2); event.preventDefault()"/>
+            <text class="pad-num" x="155" y="68" font-size="11">1</text>
+            <text class="pad-num" x="237" y="106" font-size="11">2</text>
+          </svg>
+          <!-- SVG Child: antero-posterior placement (smaller body) -->
+          <svg viewBox="0 0 390 130" id="pad-svg-child" class="pad-svg">
+            <!-- Child torso (smaller, front view) -->
+            <ellipse class="torso-head" cx="140" cy="20" rx="16" ry="15"/>
+            <path class="torso-body" d="M115,38 Q105,44 103,60 L101,105 Q118,112 140,112 Q162,112 179,105 L177,60 Q175,44 165,38 Q152,32 140,32 Q128,32 115,38 Z"/>
+            <!-- Pad 1: front center chest (sternum) -->
+            <path class="pad-cable" id="cable1-child" d="M140,112 C140,105 138,95 140,70" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
+            <rect class="pad-zone" id="pad1-zone-child" x="118" y="52" width="44" height="32" rx="6"
+                  onclick="connectPad(1)" ontouchend="connectPad(1); event.preventDefault()"/>
+            <text class="pad-num" x="133" y="73" font-size="10">1</text>
+            <text class="pad-label-hint" x="140" y="95" font-size="7" text-anchor="middle" fill="#6b7280">FRONT</text>
+            <!-- Back view silhouette (right side) -->
+            <ellipse class="torso-head" cx="290" cy="20" rx="16" ry="15"/>
+            <path class="torso-body-back" d="M265,38 Q255,44 253,60 L251,105 Q268,112 290,112 Q312,112 329,105 L327,60 Q325,44 315,38 Q302,32 290,32 Q278,32 265,38 Z"/>
+            <!-- Pad 2: back between shoulder blades -->
+            <path class="pad-cable" id="cable2-child" d="M290,112 C290,105 288,90 290,65" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
+            <rect class="pad-zone" id="pad2-zone-child" x="268" y="48" width="44" height="32" rx="6"
+                  onclick="connectPad(2)" ontouchend="connectPad(2); event.preventDefault()"/>
+            <text class="pad-num" x="283" y="69" font-size="10">2</text>
+            <text class="pad-label-hint" x="290" y="95" font-size="7" text-anchor="middle" fill="#6b7280">BACK</text>
+            <!-- Arrow indicating front→back -->
+            <path d="M185,55 L230,55" fill="none" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+            <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4b5563"/></marker></defs>
+            <text x="207" y="50" font-size="7" text-anchor="middle" fill="#4b5563" font-family="var(--font-device)">&#8635;</text>
+          </svg>
+        </div>
+
+        <div id="connectors">
+          <div id="conn-left" class="connector" onclick="connectPad(1)" ontouchend="connectPad(1); event.preventDefault()">
+            <div class="conn-port"><div class="conn-pin"></div></div>
+            <div class="conn-labels">
+              <span class="pad-connector-label" data-i18n="pad1_label">ELEKTRODA 1</span>
+              <span class="conn-hint" data-i18n="pad1_hint">Prava klicni kost</span>
+            </div>
+          </div>
+          <div class="conn-center">
+            <span class="conn-brand-label"></span>
+          </div>
+          <div id="conn-right" class="connector" onclick="connectPad(2)" ontouchend="connectPad(2); event.preventDefault()">
+            <div class="conn-labels">
+              <span class="pad-connector-label" data-i18n="pad2_label">ELEKTRODA 2</span>
+              <span class="conn-hint" data-i18n="pad2_hint">Levy bok - axila</span>
+            </div>
+            <div class="conn-port"><div class="conn-pin"></div></div>
+          </div>
+        </div>
+
+        <div id="main-buttons">
+          <div id="btn-on" role="button" tabindex="0"
+               onclick="pressPower()" ontouchend="pressPower(); event.preventDefault()">
+            <span class="btn-symbol">&#9211;</span>
+            <span class="btn-label" data-i18n="btn_on">ZAP/VYP</span>
+          </div>
+          <div id="btn-info" role="button" tabindex="0"
+               onclick="pressInfo()" ontouchend="pressInfo(); event.preventDefault()">
+            <em>i</em>
+          </div>
+          <div id="btn-shock" role="button" tabindex="0"
+               onclick="pressShock()" ontouchend="pressShock(); event.preventDefault()">
+            <span class="btn-symbol">&#9889;</span>
+            <span class="btn-label" data-i18n="btn_shock">VYBOJ</span>
+          </div>
+        </div>
+
+        <div id="charging-bar-wrap" hidden>
+          <div id="charging-bar-fill"></div>
+        </div>
+
+        <div id="led-status">
+          <div class="led-item"><div id="led-ready-s" class="led"></div><span data-i18n="led_ready">READY</span></div>
+          <div class="led-item"><div id="led-charging" class="led"></div><span data-i18n="led_charging">NABIJIM</span></div>
+          <div class="led-item"><div id="led-shock" class="led"></div><span data-i18n="led_shock">VYBOJ</span></div>
+        </div>
+
+        <div class="frx-serial"></div>
+      </div>
+    </div>
+
+    <!-- Right: Instruction panel -->
+    <div id="instruction-panel">
+      <div id="scenario-bar">
+        <select id="scenario-selector" onchange="selectScenario(this.value)">
+          <option value="random" selected>&#127922;</option>
+        </select>
+        <button id="btn-reset-scenario" onclick="resetScenario()" title="Reset">&#8634;</button>
+        <span id="scenario-status"></span>
+      </div>
+
+      <div id="panel-tabs">
+        <button class="panel-tab active" onclick="showTab('simulation')" data-i18n="tab_simulation" id="tab-btn-sim">Pr\u016fb\u011bh</button>
+        <button class="panel-tab" onclick="showTab('scenario')" data-i18n="tab_scenario" id="tab-btn-scen">Sc\u00e9n\u00e1\u0159</button>
+      </div>
+
+      <!-- Tab 1: Simulation (current content) -->
+      <div class="tab-content active" id="tab-simulation">
+        <div id="main-instruction"></div>
+
+        <div id="metronome-section">
+          <div id="metro-top">
+            <div id="metro-circle"></div>
+            <div id="metro-bpm-display">110 BPM</div>
+            <div id="metro-bars">
+              <div class="mbar"></div><div class="mbar"></div><div class="mbar"></div>
+              <div class="mbar"></div><div class="mbar"></div>
+            </div>
+          </div>
+          <div id="metro-slider-row">
+            <span class="metro-label">80</span>
+            <input type="range" id="metro-slider" min="80" max="140" step="5" value="110"
+                   oninput="MetronomeEngine.setBpm(+this.value)">
+            <span class="metro-label">140</span>
+            <span id="metro-bpm-value">110</span>
+            <span class="metro-label">BPM</span>
+          </div>
+        </div>
+
+        <div id="cpr-controls">
+          <div id="cpr-header">
+            <div id="cpr-counter">
+              <span id="cpr-num">0</span><span id="cpr-denom">/30</span>
+            </div>
+            <div id="cpr-round-info">
+              <span id="cpr-round-label" data-i18n="cpr_round_label">Kolo</span>
+              <span id="cpr-round-val">1/4</span>
+            </div>
+            <div id="cpr-timer">
+              <span id="cpr-elapsed">00:00</span>
+            </div>
+          </div>
+          <div id="cpr-progress">
+            <div id="cpr-progress-fill"></div>
+          </div>
+          <button id="btn-compress" onclick="doCompress()" ontouchend="doCompress(); event.preventDefault()" data-i18n="btn_compress">&#8595; STLACENI HRUDNIKU &#8595;</button>
+          <button id="btn-breaths" onclick="doBreaths()" ontouchend="doBreaths(); event.preventDefault()" data-i18n="btn_breaths">&#10003; DVA VDECHY PROVEDENY</button>
+        </div>
+
+        <div id="event-log">
+          <div class="log-title" data-i18n="log_title">Pr\u016fb\u011bh z\u00e1sahu</div>
+          <div id="log-entries"></div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Scenario detail -->
+      <div class="tab-content" id="tab-scenario-info">
+        <div class="scenario-detail-name" id="scen-detail-name"></div>
+        <div class="scenario-detail-params" id="scen-detail-params"></div>
+        <div class="scenario-detail-desc" id="scen-detail-desc"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- 3. RESULT MODAL -->
+  <div id="result-modal" hidden>
+    <div id="result-content">
+      <h2 data-i18n="result_title"></h2>
+      <table>
+        <tr><td data-i18n="result_time"></td><td id="val-time"></td></tr>
+        <tr><td data-i18n="result_shocks"></td><td id="val-shocks"></td></tr>
+        <tr><td data-i18n="result_cpr"></td><td id="val-cpr"></td></tr>
+        <tr><td data-i18n="result_avg_rate"></td><td id="val-rate"></td></tr>
+        <tr><td data-i18n="result_longest_pause"></td><td id="val-pause"></td></tr>
+      </table>
+      <button onclick="resetSession()" data-i18n="btn_restart"></button>
+      <button onclick="window.print()" data-i18n="btn_print"></button>
+    </div>
+  </div>
+
+  <!-- 4. DONATE MODAL -->
+  <div id="donate-modal" hidden role="dialog" aria-modal="true" aria-labelledby="donate-title">
+    <div id="donate-content">
+      <button id="donate-close" onclick="closeDonateModal()">&#10005;</button>
+      <h2 id="donate-title" data-i18n="donate_title">Podporte projekt</h2>
+      <p id="donate-desc" data-i18n="donate_desc"></p>
+      <div id="donate-qr">
+        <img id="donate-qr-img" src="images/qr.jpeg"
+             alt="QR Revolut - revolut.me/tumavaclav" width="200" height="200"
+             onerror="this.hidden=true; document.getElementById('donate-qr-fallback').hidden=false">
+        <div id="donate-qr-fallback" hidden>
+          <svg viewBox="0 0 120 120" width="120" height="120">
+            <rect width="120" height="120" fill="#0f172a" rx="8"/>
+            <rect x="10" y="10" width="40" height="40" fill="none" stroke="#0075eb" stroke-width="3" rx="4"/>
+            <rect x="20" y="20" width="20" height="20" fill="#0075eb" rx="2"/>
+            <rect x="70" y="10" width="40" height="40" fill="none" stroke="#0075eb" stroke-width="3" rx="4"/>
+            <rect x="80" y="20" width="20" height="20" fill="#0075eb" rx="2"/>
+            <rect x="10" y="70" width="40" height="40" fill="none" stroke="#0075eb" stroke-width="3" rx="4"/>
+            <rect x="20" y="80" width="20" height="20" fill="#0075eb" rx="2"/>
+            <text x="60" y="100" text-anchor="middle" fill="#64748b" font-size="8" font-family="monospace">revolut.me/tumavaclav</text>
+          </svg>
+        </div>
+      </div>
+      <a id="donate-link" href="https://revolut.me/tumavaclav" target="_blank" rel="noopener noreferrer" data-i18n="donate_link_text">Otevrit Revolut &rarr;</a>
+      <p id="donate-handle">revolut.me/tumavaclav</p>
+      <p id="donate-note" data-i18n="donate_note"></p>
+    </div>
+  </div>
+
+  <footer id="site-footer">
+    <a href="https://4dive.cz" target="_blank">4dive.cz</a> &middot;
+    <a href="https://diveidda.com/cs" target="_blank">diveidda.com/cs</a> &middot; 2026
+  </footer>
+
+  <!-- 5. JAVASCRIPT -->
+  <script>
+// ═══════════════════════════════════════════════════════════
+//  A. LANG OBJECT
+// ═══════════════════════════════════════════════════════════
+const LANG = {
+  cs: {
+    ui: {
+      training_banner: 'TRENA\u017d\u00c9R \u00B7 POUZE PRO V\u00ddUKU BEZ AED ZA\u0158\u00cdZEN\u00cd',
+      btn_on: 'ZAP / VYP',
+      btn_shock: 'V\u00ddBOJ',
+      led_ready: 'READY',
+      led_charging: 'NAB\u00cdJ\u00cdM',
+      led_shock: 'V\u00ddBOJ DOPORU\u010cEN',
+      pad1_label: 'ELEKTRODA 1',
+      pad2_label: 'ELEKTRODA 2',
+      pad1_hint: 'Prav\u00e1 kl\u00ed\u010dn\u00ed kost',
+      pad2_hint: 'Lev\u00fd bok \u2013 axila',
+      pad_mode_adult: 'Dosp\u011bl\u00fd',
+      pad_mode_child: 'D\u00edt\u011b',
+      scenario_random: '\uD83C\uDFB2 N\u00e1hodn\u00fd',
+      scenario_s1: 'S1 \u2014 Klasick\u00e1 z\u00e1stava (VF)',
+      scenario_s2: 'S2 \u2014 Rezistentn\u00ed VF',
+      scenario_s3: 'S3 \u2014 Nedefibrilovateln\u00fd (PEA \u2192 ROSC)',
+      scenario_s4: 'S4 \u2014 Asystola (bez ROSC)',
+      scenario_s5: 'S5 \u2014 D\u00edt\u011b (pediatric)',
+      scenario_s6: 'S6 \u2014 Pozdn\u00ed p\u0159\u00edjezd',
+      scenario_ready: 'P\u0159ipraven',
+      scenario_running: 'Aktivn\u00ed',
+      cpr_round_label: 'Kolo',
+      btn_compress: '\u2193 STLA\u010cEN\u00cd HRUDN\u00cdKU \u2193',
+      btn_breaths: '\u2713 DVA VDECHY PROVEDENY',
+      result_title: 'V\u00ddSLEDKY TR\u00c9NINKU',
+      result_time: 'Celkov\u00fd \u010das',
+      result_shocks: 'V\u00fdboje pod\u00e1ny',
+      result_cpr: 'KPR cykly',
+      result_avg_rate: 'Pr\u016fm\u011brn\u00e1 frekvence',
+      result_longest_pause: 'Nejdel\u0161\u00ed p\u0159eru\u0161en\u00ed KPR',
+      btn_restart: 'Za\u010d\u00edt znovu',
+      btn_print: 'Vytisknout',
+      log_title: 'Pr\u016fb\u011bh z\u00e1sahu',
+      tab_simulation: 'Pr\u016fb\u011bh',
+      tab_scenario: 'Sc\u00e9n\u00e1\u0159',
+      param_rhythm: 'Rytmus',
+      param_shockable: 'Defibrilovateln\u00fd',
+      param_energy: 'Energie',
+      param_outcome: 'V\u00fdsledek',
+      val_yes: 'Ano',
+      val_no: 'Ne',
+      val_rosc: 'ROSC (obnoven\u00ed ob\u011bhu)',
+      val_no_rosc: 'Bez ROSC',
+      site_title: 'AED Trainer \u00B7 Simulator',
+      resources_btn: 'Zdroje',
+      donate_btn: 'Podpo\u0159it',
+      donate_title: 'Podpo\u0159te projekt',
+      donate_desc: 'Tento trena\u017e\u00e9r vznikl jako open-source n\u00e1stroj pro v\u00fdcvik prvn\u00ed pomoci. Pokud v\u00e1m pomohl nebo ho pou\u017e\u00edv\u00e1te ve v\u00fduce, zva\u017ete symbolick\u00fd p\u0159\u00edsp\u011bvek na jeho dal\u0161\u00ed rozvoj.',
+      donate_link_text: 'Otev\u0159\u00edt Revolut \u2192',
+      donate_note: 'P\u0159\u00edsp\u011bvek nen\u00ed podm\u00ednkou pou\u017eit\u00ed. Trena\u017e\u00e9r je a z\u016fstane zdarma.',
+      donate_close: 'Zav\u0159\u00edt',
+      no_voice_warning: '\u010cesk\u00fd hlas nen\u00ed dostupn\u00fd. Nainstalujte jej v Nastaven\u00ed \u2192 Usnadn\u011bn\u00ed \u2192 Hlasov\u00fd v\u00fdstup.',
+      voice_lang: 'cs-CZ',
+    },
+    voice: {
+      start:           { text: 'P\u0159\u00edstroj zapnut. P\u0159ilo\u017ete elektrody na holou k\u016f\u017ei pacienta.', priority: 'high' },
+      pad1_prompt:     { text: 'P\u0159ilo\u017ete elektrodu \u010d\u00edslo jedna pod pravou kl\u00ed\u010dn\u00ed kost.', priority: 'normal' },
+      pad1_ok:         { text: 'Elektroda jedna p\u0159ilo\u017eena.', priority: 'normal' },
+      pad2_prompt:     { text: 'P\u0159ilo\u017ete elektrodu \u010d\u00edslo dv\u011b na lev\u00fd bok pacienta, pod podpa\u017e\u00ed.', priority: 'normal' },
+      pad2_ok:         { text: 'Elektroda dv\u011b p\u0159ilo\u017eena.', priority: 'normal' },
+      analyzing:       { text: 'Nest\u00fdkejte se pacienta. Analyzuji srde\u010dn\u00ed rytmus.', priority: 'high' },
+      analyze_wait:    { text: 'Nedot\u00fdkejte se pacienta.', priority: 'low' },
+      shock_advised:   { text: 'V\u00fdboj doporu\u010den. Nab\u00edj\u00edm. V\u0161ichni pry\u010d od pacienta!', priority: 'high' },
+      shock_ready:     { text: 'P\u0159\u00edstroj nabit. Stiskn\u011bte oran\u017eov\u00e9 tla\u010d\u00edtko v\u00fdboje.', priority: 'normal' },
+      shock_clear:     { text: 'V\u0161ichni pry\u010d!', priority: 'high' },
+      shock_delivered: { text: 'V\u00fdboj pod\u00e1n. Okam\u017eit\u011b zahajte KPR.', priority: 'high' },
+      no_shock:        { text: 'V\u00fdboj nedoporu\u010den. Okam\u017eit\u011b zahajte KPR \u2013 t\u0159icet stla\u010den\u00ed, dva vdechy.', priority: 'high' },
+      cpr_start:       { text: 'Zahajte KPR. Stla\u010dujte hrudn\u00edk do hloubky p\u011bt a\u017e \u0161est centimetr\u016f.', priority: 'normal' },
+      cpr_depth:       { text: 'Stla\u010dujte pevn\u011bji \u2013 minim\u00e1ln\u011b p\u011bt centimetr\u016f.', priority: 'normal' },
+      cpr_rate:        { text: 'Udr\u017eujte frekvenci sto a\u017e sto dvacet stla\u010den\u00ed za minutu.', priority: 'normal' },
+      cpr_15:          { text: 'Patn\u00e1ct stla\u010den\u00ed \u2013 pokra\u010dujte!', priority: 'low' },
+      cpr_30:          { text: 'T\u0159icet stla\u010den\u00ed. Prove\u010fte dva z\u00e1chrann\u00e9 vdechy.', priority: 'high' },
+      breaths_done:    { text: 'Pokra\u010dujte v KPR.', priority: 'normal' },
+      reanalyze:       { text: 'Analyzuji srde\u010dn\u00ed rytmus. Nest\u00fdkejte se pacienta.', priority: 'high' },
+      rosc:            { text: 'Spont\u00e1nn\u00ed ob\u011bh obnoven. Zkontrolujte d\u00fdch\u00e1n\u00ed. Ulo\u017ete do stabilizovan\u00e9 polohy.', priority: 'high' },
+      continue_cpr:    { text: 'Pokra\u010dujte v KPR. Z\u00e1chrann\u00e1 slu\u017eba byla p\u0159ivol\u00e1na.', priority: 'normal' },
+      shock2:          { text: 'Druh\u00fd v\u00fdboj doporu\u010den. V\u0161ichni pry\u010d od pacienta!', priority: 'high' },
+      shock3:          { text: 'T\u0159et\u00ed v\u00fdboj doporu\u010den. V\u0161ichni pry\u010d od pacienta!', priority: 'high' },
+      low_battery:     { text: 'Baterie je slab\u00e1.', priority: 'low' },
+      pediatric_on:    { text: 'D\u011btsk\u00fd kl\u00ed\u010d vlo\u017een. Energie sn\u00ed\u017eena na pades\u00e1t joul\u016f.', priority: 'high' },
+      off:             { text: 'P\u0159\u00edstroj vypnut.', priority: 'high' },
+      end_session:     { text: 'Tr\u00e9nink ukon\u010den. Prohl\u00e9dn\u011bte si v\u00fdsledky.', priority: 'high' },
+    },
+    log: {
+      powered_on: 'P\u0159\u00edstroj zapnut',
+      pad1_placed: 'Elektroda 1 p\u0159ilo\u017eena',
+      pad2_placed: 'Elektroda 2 p\u0159ilo\u017eena',
+      analyzing: 'Anal\u00fdza zah\u00e1jena',
+      vf_detected: 'VF detekov\u00e1na \u2192 v\u00fdboj doporu\u010den',
+      pea_detected: 'PEA detekov\u00e1na \u2192 KPR',
+      asy_detected: 'Asystola \u2192 KPR',
+      charging: 'Nab\u00edj\u00edm\u2026',
+      shock_label: 'V\u00fdboj #%n pod\u00e1n (%j J)',
+      cpr_start: 'KPR zah\u00e1jena',
+      cpr_cycle: 'KPR kolo %n/4',
+      reanalyze: 'Re-anal\u00fdza',
+      rosc: 'ROSC \u2013 ob\u011bh obnoven',
+      powered_off: 'P\u0159\u00edstroj vypnut',
+    },
+  },
+
+  en: {
+    ui: {
+      training_banner: 'TRAINER \u00B7 FOR TRAINING WITHOUT AED DEVICE',
+      btn_on: 'ON / OFF',
+      btn_shock: 'SHOCK',
+      led_ready: 'READY',
+      led_charging: 'CHARGING',
+      led_shock: 'SHOCK ADVISED',
+      pad1_label: 'PAD 1',
+      pad2_label: 'PAD 2',
+      pad1_hint: 'Right upper chest',
+      pad2_hint: 'Left side \u2013 apex',
+      pad_mode_adult: 'Adult',
+      pad_mode_child: 'Child',
+      scenario_random: '\uD83C\uDFB2 Random',
+      scenario_s1: 'S1 \u2014 Classic arrest (VF)',
+      scenario_s2: 'S2 \u2014 Refractory VF',
+      scenario_s3: 'S3 \u2014 Non-shockable (PEA \u2192 ROSC)',
+      scenario_s4: 'S4 \u2014 Asystole (no ROSC)',
+      scenario_s5: 'S5 \u2014 Child (pediatric)',
+      scenario_s6: 'S6 \u2014 Delayed response',
+      scenario_ready: 'Ready',
+      scenario_running: 'Active',
+      cpr_round_label: 'Round',
+      btn_compress: '\u2193 CHEST COMPRESSION \u2193',
+      btn_breaths: '\u2713 TWO RESCUE BREATHS DONE',
+      result_title: 'TRAINING RESULTS',
+      result_time: 'Total time',
+      result_shocks: 'Shocks delivered',
+      result_cpr: 'CPR cycles',
+      result_avg_rate: 'Average rate',
+      result_longest_pause: 'Longest CPR pause',
+      btn_restart: 'Start again',
+      btn_print: 'Print',
+      log_title: 'Incident timeline',
+      tab_simulation: 'Simulation',
+      tab_scenario: 'Scenario',
+      param_rhythm: 'Rhythm',
+      param_shockable: 'Shockable',
+      param_energy: 'Energy',
+      param_outcome: 'Outcome',
+      val_yes: 'Yes',
+      val_no: 'No',
+      val_rosc: 'ROSC (restored circulation)',
+      val_no_rosc: 'No ROSC',
+      site_title: 'AED Trainer \u00B7 Simulator',
+      resources_btn: 'Resources',
+      donate_btn: 'Support',
+      donate_title: 'Support the project',
+      donate_desc: 'This trainer was created as an open-source tool for first aid training. If it helped you or you use it in teaching, consider a small contribution towards its further development.',
+      donate_link_text: 'Open Revolut \u2192',
+      donate_note: 'A contribution is not a condition of use. The trainer is and will remain free.',
+      donate_close: 'Close',
+      no_voice_warning: 'English voice not found. Install it in Settings \u2192 Accessibility \u2192 Speech.',
+      voice_lang: 'en-US',
+    },
+    voice: {
+      start:           { text: 'Unit on. Attach pads to the patient\'s bare skin.', priority: 'high' },
+      pad1_prompt:     { text: 'Place pad one below the right collarbone.', priority: 'normal' },
+      pad1_ok:         { text: 'Pad one attached.', priority: 'normal' },
+      pad2_prompt:     { text: 'Place pad two on the left side of the chest, below the armpit.', priority: 'normal' },
+      pad2_ok:         { text: 'Pad two attached.', priority: 'normal' },
+      analyzing:       { text: 'Do not touch the patient. Analyzing heart rhythm.', priority: 'high' },
+      analyze_wait:    { text: 'Do not touch the patient.', priority: 'low' },
+      shock_advised:   { text: 'Shock advised. Charging. Stand clear of the patient!', priority: 'high' },
+      shock_ready:     { text: 'Unit charged. Press the orange shock button.', priority: 'normal' },
+      shock_clear:     { text: 'Stand clear!', priority: 'high' },
+      shock_delivered: { text: 'Shock delivered. Start CPR immediately.', priority: 'high' },
+      no_shock:        { text: 'No shock advised. Start CPR immediately \u2013 thirty compressions, two breaths.', priority: 'high' },
+      cpr_start:       { text: 'Begin CPR. Push down five to six centimetres on the chest.', priority: 'normal' },
+      cpr_depth:       { text: 'Push harder \u2013 at least five centimetres.', priority: 'normal' },
+      cpr_rate:        { text: 'Maintain a rate of one hundred to one hundred and twenty per minute.', priority: 'normal' },
+      cpr_15:          { text: 'Fifteen compressions \u2013 keep going!', priority: 'low' },
+      cpr_30:          { text: 'Thirty compressions. Give two rescue breaths.', priority: 'high' },
+      breaths_done:    { text: 'Continue CPR.', priority: 'normal' },
+      reanalyze:       { text: 'Analyzing heart rhythm. Do not touch the patient.', priority: 'high' },
+      rosc:            { text: 'Return of spontaneous circulation. Check breathing. Place in recovery position.', priority: 'high' },
+      continue_cpr:    { text: 'Continue CPR. Emergency services have been called.', priority: 'normal' },
+      shock2:          { text: 'Second shock advised. Stand clear of the patient!', priority: 'high' },
+      shock3:          { text: 'Third shock advised. Stand clear of the patient!', priority: 'high' },
+      low_battery:     { text: 'Battery is low.', priority: 'low' },
+      pediatric_on:    { text: 'Child key inserted. Energy reduced to fifty joules.', priority: 'high' },
+      off:             { text: 'Unit off.', priority: 'high' },
+      end_session:     { text: 'Training complete. Review your results.', priority: 'high' },
+    },
+    log: {
+      powered_on: 'Unit powered on',
+      pad1_placed: 'Pad 1 placed',
+      pad2_placed: 'Pad 2 placed',
+      analyzing: 'Analysis started',
+      vf_detected: 'VF detected \u2192 shock advised',
+      pea_detected: 'PEA detected \u2192 CPR',
+      asy_detected: 'Asystole \u2192 CPR',
+      charging: 'Charging\u2026',
+      shock_label: 'Shock #%n delivered (%j J)',
+      cpr_start: 'CPR started',
+      cpr_cycle: 'CPR round %n/4',
+      reanalyze: 'Re-analysis',
+      rosc: 'ROSC \u2013 circulation restored',
+      powered_off: 'Unit powered off',
+    },
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+//  B. t(), setLang(), renderUI()
+// ═══════════════════════════════════════════════════════════
+let currentLang = 'cs';
+
+function t(section, key) {
+  const val = LANG[currentLang]?.[section]?.[key];
+  if (val !== undefined) return val;
+  const fallback = LANG['cs']?.[section]?.[key];
+  if (fallback !== undefined) return fallback;
+  return '[' + key + ']';
+}
+
+function setLang(lang) {
+  if (!LANG[lang]) return;
+  currentLang = lang;
+  SpeechEngine.reloadVoice();
+  renderUI();
+}
+
+function renderUI() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t('ui', el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    el.setAttribute('aria-label', t('ui', el.dataset.i18nAria));
+  });
+  document.querySelectorAll('[data-i18n-text]').forEach(el => {
+    el.textContent = '\u2665 ' + t('ui', el.dataset.i18nText);
+  });
+  // Refresh scenario selector — re-populate for current language
+  ScenarioLoader._populateSelector();
+  const compress = document.getElementById('btn-compress');
+  if (compress) compress.textContent = t('ui', 'btn_compress');
+  const breaths = document.getElementById('btn-breaths');
+  if (breaths) breaths.textContent = t('ui', 'btn_breaths');
+  const roundLbl = document.getElementById('cpr-round-label');
+  if (roundLbl) roundLbl.textContent = t('ui', 'cpr_round_label');
+  // Logo is an image — no text update needed
+  const scenStatus = document.getElementById('scenario-status');
+  if (scenStatus && !state.powered) scenStatus.textContent = t('ui', 'scenario_ready');
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.id === 'lang-' + currentLang);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  C. AudioEngine
+// ═══════════════════════════════════════════════════════════
+const AudioEngine = {
+  ctx: null,
+  init() {
+    if (this.ctx) return;
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  },
+  beep(freq, duration, type, volume) {
+    if (!this.ctx) return;
+    type = type || 'sine'; volume = volume ?? 0.3;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain); gain.connect(this.ctx.destination);
+    osc.frequency.value = freq; osc.type = type;
+    gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+    osc.start(); osc.stop(this.ctx.currentTime + duration);
+  },
+  sweep(from, to, duration, type, volume) {
+    if (!this.ctx) return;
+    type = type || 'sine'; volume = volume ?? 0.25;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain); gain.connect(this.ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(from, this.ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(to, this.ctx.currentTime + duration);
+    gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+    osc.start(); osc.stop(this.ctx.currentTime + duration);
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+//  D. AudioPlayer (MP3 cache)
+// ═══════════════════════════════════════════════════════════
+const AudioPlayer = {
+  cache: {},
+  current: null,
+  async preload(lang) {
+    const keys = Object.keys(LANG[lang]?.voice ?? {});
+    for (let i = 0; i < keys.length; i += 3) {
+      const chunk = keys.slice(i, i + 3);
+      await Promise.allSettled(chunk.map(key => this._loadOne(lang, key)));
+    }
+  },
+  async _loadOne(lang, key) {
+    return new Promise(res => {
+      const audio = new Audio('audio/' + lang + '/' + key + '.mp3');
+      audio.preload = 'auto';
+      audio.oncanplaythrough = () => { this.cache[lang + ':' + key] = audio; res(true); };
+      audio.onerror = () => res(false);
+      audio.load();
+    });
+  },
+  play(lang, key, priority) {
+    priority = priority || 'normal';
+    const ck = lang + ':' + key;
+    const audio = this.cache[ck];
+    if (!audio) return false;
+    if (priority === 'low' && this.current && !this.current.paused) return true;
+    if (priority === 'high' && this.current) {
+      this.current.pause(); this.current.currentTime = 0;
+    }
+    audio.currentTime = 0;
+    this.current = audio;
+    audio.play().catch(() => {});
+    return true;
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+//  E. SpeechEngine
+// ═══════════════════════════════════════════════════════════
+const SpeechEngine = {
+  mode: 'detecting',    // 'mp3' | 'tts' | 'tts-nonnative' | 'silent'
+  mp3Available: false,  // are MP3 files detected?
+  ttsAvailable: false,  // is Web Speech API working?
+  synth: window.speechSynthesis,
+  voice: null,
+  voicesLoaded: false,
+  userGestured: false,
+
+  init() {
+    this._initTTS();
+    // Chrome TTS bug workaround — synthesis stalls after ~15s
+    this._ttsBugInterval = setInterval(() => {
+      if (this.synth && this.synth.speaking) {
+        this.synth.pause();
+        this.synth.resume();
+      }
+    }, 10000);
+    this._showModeIndicator('detecting');
+  },
+
+  // Called after first user click (browser audio policy)
+  async unlockAndDetect() {
+    this.userGestured = true;
+
+    // 1. Unlock TTS with a silent utterance (Chrome requires gesture)
+    try {
+      const u = new SpeechSynthesisUtterance('');
+      u.volume = 0;
+      u.lang = t('ui', 'voice_lang');
+      if (this.voice) u.voice = this.voice;
+      this.synth.speak(u);
+      this.synth.cancel();
+    } catch {}
+
+    // 2. Retry loading voices (Chrome sometimes needs this after gesture)
+    if (!this.voicesLoaded) {
+      this._loadVoices();
+      // Give Chrome a moment to populate voices
+      await new Promise(r => setTimeout(r, 200));
+      this._loadVoices();
+    }
+
+    // 3. Detect MP3 availability
+    await this._detectMp3();
+
+    // 4. Set best available mode
+    if (this.mp3Available) {
+      this.mode = 'mp3';
+    } else if (this.ttsAvailable) {
+      const lang = t('ui', 'voice_lang');
+      const hasNative = this.voice && this.voice.lang === lang;
+      this.mode = hasNative ? 'tts' : 'tts-nonnative';
+    } else {
+      this.mode = 'silent';
+    }
+    this._showModeIndicator(this.mode);
+    this._updateWarning();
+  },
+
+  async _detectMp3() {
+    try {
+      const test = new Audio('audio/' + currentLang + '/start.mp3');
+      await new Promise((res, rej) => {
+        test.oncanplaythrough = res;
+        test.onerror = rej;
+        test.load();
+        setTimeout(rej, 3000);
+      });
+      this.mp3Available = true;
+      AudioPlayer.preload(currentLang);
+    } catch {
+      this.mp3Available = false;
+    }
+  },
+
+  _initTTS() {
+    this._loadVoices();
+    this.synth.onvoiceschanged = () => this._loadVoices();
+  },
+
+  _loadVoices() {
+    const voices = this.synth.getVoices();
+    if (!voices.length) return;
+    this.voicesLoaded = true;
+    const lang = t('ui', 'voice_lang');
+    this.voice =
+      voices.find(v => v.lang === lang)
+      ?? voices.find(v => v.lang.startsWith(lang.split('-')[0]))
+      ?? voices.find(v => v.lang.startsWith('en'))
+      ?? voices[0];
+    this.ttsAvailable = !!this.voice;
+    this._updateWarning();
+  },
+
+  _updateWarning() {
+    const warn = document.getElementById('voice-warning');
+    if (!warn) return;
+    if (this.mode === 'mp3') { warn.hidden = true; return; }
+    const lang = t('ui', 'voice_lang');
+    const voices = this.synth.getVoices();
+    const hasNative = voices.some(v => v.lang === lang);
+    warn.hidden = hasNative || this.mode === 'mp3';
+  },
+
+  // Cycle through available voice modes when user clicks the indicator
+  cycleMode() {
+    const modes = [];
+    if (this.mp3Available) modes.push('mp3');
+    if (this.ttsAvailable) {
+      const lang = t('ui', 'voice_lang');
+      const hasNative = this.voice && (this.voice.lang === lang ||
+        this.voice.lang.startsWith(lang.split('-')[0]));
+      modes.push(hasNative ? 'tts' : 'tts-nonnative');
+    }
+    modes.push('silent');
+
+    const idx = modes.indexOf(this.mode);
+    this.mode = modes[(idx + 1) % modes.length];
+    this._showModeIndicator(this.mode);
+    this._updateWarning();
+
+    // Quick audio test when switching to a mode
+    if (this.mode === 'tts' || this.mode === 'tts-nonnative') {
+      this.synth.cancel();
+      const u = new SpeechSynthesisUtterance(
+        currentLang === 'cs' ? 'Hlas aktivn\u00ed.' : 'Voice active.');
+      u.voice = this.voice;
+      u.lang = t('ui', 'voice_lang');
+      u.rate = 0.88; u.pitch = 0.82; u.volume = 1.0;
+      this.synth.speak(u);
+    } else if (this.mode === 'mp3') {
+      AudioPlayer.play(currentLang, 'pad1_ok', 'high');
+    }
+  },
+
+  say(key, overridePriority) {
+    const entry = t('voice', key);
+    if (!entry || !entry.text) return;
+    const priority = overridePriority ?? entry.priority ?? 'normal';
+
+    // Try MP3 first
+    if (this.mode === 'mp3') {
+      const played = AudioPlayer.play(currentLang, key, priority);
+      if (played) return;
+      // MP3 for this key missing — fall through to TTS
+    }
+
+    // TTS fallback
+    if (this.mode === 'silent') return;
+    if (this.mode !== 'tts' && this.mode !== 'tts-nonnative' && this.mode !== 'mp3') return;
+    if (!this.voice) return;
+
+    if (priority === 'high') this.synth.cancel();
+    else if (priority === 'low' && this.synth.speaking) return;
+
+    const u = new SpeechSynthesisUtterance(entry.text);
+    u.voice = this.voice;
+    u.lang = t('ui', 'voice_lang');
+    u.rate = 0.88;
+    u.pitch = 0.82;
+    u.volume = 1.0;
+    this.synth.speak(u);
+  },
+
+  reloadVoice() {
+    this._loadVoices();
+    // Re-detect MP3 for new language
+    if (this.userGestured) {
+      this._detectMp3().then(() => {
+        if (this.mp3Available && this.mode === 'mp3') {
+          AudioPlayer.preload(currentLang);
+        } else if (!this.mp3Available && this.mode === 'mp3') {
+          // MP3 not available for new lang — fall back
+          this.mode = this.ttsAvailable ? 'tts' : 'silent';
+        }
+        // Update native/nonnative status
+        if (this.mode === 'tts' || this.mode === 'tts-nonnative') {
+          const lang = t('ui', 'voice_lang');
+          const hasNative = this.voice && (this.voice.lang === lang ||
+            this.voice.lang.startsWith(lang.split('-')[0]));
+          this.mode = hasNative ? 'tts' : 'tts-nonnative';
+        }
+        this._showModeIndicator(this.mode);
+        this._updateWarning();
+      });
+    }
+  },
+
+  _showModeIndicator(mode) {
+    const el = document.getElementById('voice-quality');
+    if (!el) return;
+    const labels = {
+      'mp3':           { text: '\uD83D\uDD0A HD',  color: '#22c55e',
+        title: currentLang === 'cs' ? 'MP3 hlas \u2014 klikni pro zm\u011bnu' : 'MP3 voice \u2014 click to change' },
+      'tts':           { text: '\uD83D\uDD08 TTS',  color: '#eab308',
+        title: currentLang === 'cs' ? 'Syst\u00e9mov\u00fd hlas \u2014 klikni pro zm\u011bnu' : 'System voice \u2014 click to change' },
+      'tts-nonnative': { text: '\u26A0\uFE0F EN',   color: '#f97316',
+        title: currentLang === 'cs' ? '\u010cesk\u00fd hlas nedostupn\u00fd \u2014 klikni pro zm\u011bnu' : 'Native voice unavailable \u2014 click to change' },
+      'silent':        { text: '\uD83D\uDD07 OFF',  color: '#6b7280',
+        title: currentLang === 'cs' ? 'Hlas vypnut \u2014 klikni pro zm\u011bnu' : 'Voice off \u2014 click to change' },
+      'detecting':     { text: '\u27F3',             color: '#4b5563',
+        title: currentLang === 'cs' ? 'Zji\u0161\u0165uji hlas\u2026' : 'Detecting voice\u2026' },
+    };
+    const l = labels[mode] ?? labels['detecting'];
+    el.textContent = l.text;
+    el.style.color = l.color;
+    el.title = l.title || '';
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+//  E2. VoiceTiming — dynamic delays based on MP3 durations
+// ═══════════════════════════════════════════════════════════
+const VoiceTiming = {
+  durations: null,  // { cs: { start: 6.14, ... }, en: { ... } }
+  BUFFER: 400,      // ms buffer after voice ends before next action
+
+  async load() {
+    try {
+      const resp = await fetch('audio/durations.json');
+      if (resp.ok) { this.durations = await resp.json(); return; }
+    } catch {}
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'audio/durations.json', false);
+      xhr.send();
+      if (xhr.status === 200 || xhr.status === 0) {
+        this.durations = JSON.parse(xhr.responseText);
+      }
+    } catch {}
+  },
+
+  // Get delay in ms for a voice key: duration + buffer
+  // Falls back to hardcoded defaults if durations.json not loaded
+  delay(key, extraBuffer) {
+    extraBuffer = extraBuffer || 0;
+    const dur = this.durations?.[currentLang]?.[key];
+    if (dur) return Math.ceil(dur * 1000) + this.BUFFER + extraBuffer;
+    // Fallback defaults (worst-case CZ durations + buffer)
+    const fallback = {
+      start: 6500, pad1_prompt: 5000, pad1_ok: 3200, pad2_prompt: 5600,
+      pad2_ok: 3200, analyzing: 6300, no_shock: 7500, shock_advised: 7400,
+      shock_ready: 6000, shock_clear: 2500, shock_delivered: 5500,
+      cpr_start: 7100, cpr_30: 5700, breaths_done: 3100, reanalyze: 6300,
+      rosc: 9200, end_session: 5700,
+    };
+    return (fallback[key] || 5000) + extraBuffer;
+  },
+
+  // Get raw duration in seconds (for charging bar speed etc.)
+  seconds(key) {
+    return this.durations?.[currentLang]?.[key] || 6;
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+//  F. EcgEngine
+// ═══════════════════════════════════════════════════════════
+const EcgEngine = {
+  canvas: null, ctx: null,
+  mode: 'idle',
+  underlyingRhythm: 'flatline', // rhythm persisting under CPR artifacts
+  buffer: null,
+  bufferIdx: 0,
+  lastTimestamp: 0,
+  animId: null,
+  pqrst: null,
+  pqrstIdx: 0,
+
+  init() {
+    this.canvas = document.getElementById('ecg-canvas');
+    this.resize();
+    this._buildPQRST();
+  },
+
+  resize() {
+    const c = this.canvas;
+    if (!c || c.offsetWidth === 0) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = c.offsetWidth;
+    const h = c.offsetHeight;
+    c.width = w * dpr;
+    c.height = h * dpr;
+    this.ctx = c.getContext('2d');
+    this.ctx.scale(dpr, dpr);
+    this.buffer = new Float32Array(w);
+    this.bufferIdx = 0;
+  },
+
+  _buildPQRST() {
+    const p = new Float32Array(51);
+    for (let i = 0; i < 51; i++) p[i] = 0;
+    for (let i = 6; i <= 12; i++) p[i] = 4 * Math.exp(-0.5 * Math.pow((i - 9) / 1.5, 2));
+    p[13] = -2; p[14] = -3;
+    p[15] = 10; p[16] = 25; p[17] = 15; p[18] = 2;
+    p[19] = -8; p[20] = -4; p[21] = -1;
+    for (let i = 29; i <= 40; i++) p[i] = 8 * Math.exp(-0.5 * Math.pow((i - 34) / 2.5, 2));
+    this.pqrst = p;
+  },
+
+  start() {
+    if (this.animId) return;
+    this.lastTimestamp = performance.now();
+    const loop = (ts) => {
+      const dt = Math.min(ts - this.lastTimestamp, 100);
+      this.lastTimestamp = ts;
+      this._draw(dt);
+      this.animId = requestAnimationFrame(loop);
+    };
+    this.animId = requestAnimationFrame(loop);
+  },
+
+  stop() {
+    if (this.animId) cancelAnimationFrame(this.animId);
+    this.animId = null;
+  },
+
+  setMode(m, underlying) {
+    this.mode = m;
+    if (underlying !== undefined) this.underlyingRhythm = underlying;
+    this.pqrstIdx = 0;
+  },
+
+  _draw(dt) {
+    const c = this.canvas;
+    const ctx = this.ctx;
+    if (!ctx || !c || c.offsetWidth === 0) return;
+    const w = c.offsetWidth;
+    const h = c.offsetHeight;
+    const mid = h / 2;
+
+    // Advance buffer
+    const speed = dt * 0.12;
+    for (let s = 0; s < speed; s++) {
+      this.buffer[this.bufferIdx % w] = this._sample(mid);
+      this.bufferIdx++;
+    }
+
+    // Clear
+    ctx.fillStyle = '#020a05';
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = '#0d2010';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < w; x += 20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 10) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    // Draw line
+    ctx.beginPath();
+    ctx.strokeStyle = this._color();
+    ctx.lineWidth = 1.5;
+    const start = this.bufferIdx;
+    for (let i = 0; i < w; i++) {
+      const idx = (start + i) % w;
+      const y = this.buffer[idx] || mid;
+      if (i === 0) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+    }
+    ctx.stroke();
+
+    // Overlay text for ANALYZING (works with any underlying ECG mode)
+    if ((state.phase === 'ANALYZING' || state.phase === 'REANALYZE') && Math.floor(Date.now() / 500) % 2 === 0) {
+      ctx.fillStyle = 'rgba(234,179,8,0.15)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#eab308';
+      ctx.font = 'bold 13px Rajdhani, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(currentLang === 'cs' ? 'ANAL\u00ddZA RYTMU' : 'ANALYZING', w / 2, mid + 5);
+      ctx.textAlign = 'start';
+    }
+  },
+
+  // Get underlying rhythm value (no compression artifacts)
+  _rhythmSample(rhythm, mid) {
+    switch (rhythm) {
+      case 'flatline': return (Math.random() - 0.5) * 1;
+      case 'vf': return Math.sin(this.bufferIdx * 0.15) * 12 + (Math.random() - 0.5) * 6;
+      case 'vf_strong':
+      case 'analyzing': return Math.sin(this.bufferIdx * 0.18) * 22 + (Math.random() - 0.5) * 8;
+      case 'vf_weak': return Math.sin(this.bufferIdx * 0.12) * 6 + (Math.random() - 0.5) * 4;
+      case 'pea': {
+        const p = this.pqrst;
+        const period = 90;
+        const idx = this.pqrstIdx % period;
+        if (idx < p.length) return -p[idx] * 0.4;
+        return (Math.random() - 0.5) * 0.5;
+      }
+      case 'asystola': return (Math.random() - 0.5) * 0.5;
+      case 'rosc_emerging': {
+        // Weak, irregular PQRST gradually appearing
+        const p = this.pqrst;
+        const period = 70; // slower rate
+        const idx = this.pqrstIdx % period;
+        if (idx < p.length) return -p[idx] * 0.3 + (Math.random() - 0.5) * 2;
+        return (Math.random() - 0.5) * 1;
+      }
+      default: return 0;
+    }
+  },
+
+  // Compression artifact waveform (added on top of rhythm)
+  _compressionArtifact() {
+    const period = 65; // ~110/min at draw speed
+    const phase = this.bufferIdx % period;
+    if (phase < 4) {
+      return -14 * Math.sin((phase / 4) * Math.PI) + (Math.random() - 0.5) * 2;
+    } else if (phase < 8) {
+      return 6 * Math.sin(((phase - 4) / 4) * Math.PI) + (Math.random() - 0.5) * 2;
+    }
+    return (Math.random() - 0.5) * 1;
+  },
+
+  _sample(mid) {
+    switch (this.mode) {
+      case 'idle': return mid;
+      case 'flatline': return mid + this._rhythmSample('flatline', mid);
+      case 'vf': return mid + this._rhythmSample('vf', mid);
+      case 'vf_strong':
+      case 'analyzing': return mid + this._rhythmSample('vf_strong', mid);
+      case 'shock': return mid + (Math.random() - 0.5) * mid * 1.6;
+      case 'rosc': {
+        // Normal PQRST — only shown when circulation is fully restored
+        const p = this.pqrst;
+        const idx = this.pqrstIdx % p.length;
+        this.pqrstIdx++;
+        return mid - p[idx];
+      }
+      case 'pea': {
+        this.pqrstIdx++;
+        return mid + this._rhythmSample('pea', mid);
+      }
+      case 'asystola': return mid + this._rhythmSample('asystola', mid);
+
+      case 'cpr_artifact': {
+        // Underlying rhythm + compression artifacts overlaid
+        this.pqrstIdx++;
+        const rhythm = this._rhythmSample(this.underlyingRhythm, mid);
+        const artifact = this._compressionArtifact();
+        return mid + rhythm * 0.35 + artifact;  // rhythm attenuated (hard to see under artifacts)
+      }
+
+      default: return mid;
+    }
+  },
+
+  _color() {
+    switch (this.mode) {
+      case 'idle': return '#111';
+      case 'flatline': case 'asystola': return '#0d2a10';
+      case 'vf': case 'vf_strong': case 'analyzing': return '#eab308';
+      case 'shock': return '#ef4444';
+      case 'cpr_artifact': {
+        // Color reflects underlying rhythm during CPR
+        const r = this.underlyingRhythm;
+        if (r === 'vf' || r === 'vf_weak' || r === 'vf_strong') return '#b5960e';
+        if (r === 'asystola' || r === 'flatline') return '#1a6b24';
+        if (r === 'rosc_emerging') return '#22c55e';
+        return '#1a6b24'; // muted green for PEA/default
+      }
+      default: return '#22c55e';
+    }
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+//  G. MetronomeEngine
+// ═══════════════════════════════════════════════════════════
+const MetronomeEngine = {
+  bpm: 110,
+  ctx: null,
+  nextBeat: 0,
+  timerId: null,
+  beatCount: 0,
+
+  start(audioCtx) {
+    this.ctx = audioCtx;
+    this.nextBeat = audioCtx.currentTime + 0.05;
+    this.beatCount = 0;
+    this._schedule();
+  },
+
+  _schedule() {
+    while (this.nextBeat < this.ctx.currentTime + 0.2) {
+      this._tick(this.nextBeat);
+      this.nextBeat += 60 / this.bpm;
+      this.beatCount++;
+    }
+    this.timerId = setTimeout(() => this._schedule(), 50);
+  },
+
+  _tick(time) {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain); gain.connect(this.ctx.destination);
+    osc.frequency.value = 880; osc.type = 'sine';
+    gain.gain.setValueAtTime(0.20, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+    osc.start(time); osc.stop(time + 0.09);
+    // Animate metro circle
+    const bc = this.beatCount;
+    setTimeout(() => {
+      const circle = document.getElementById('metro-circle');
+      if (circle) {
+        circle.style.animation = 'none';
+        circle.offsetHeight;
+        circle.style.animation = 'metro-pulse ' + (60 / this.bpm) + 's ease-out 1';
+      }
+      // Animate bars
+      const bars = document.querySelectorAll('.mbar');
+      const heights = [6, 10, 18, 10, 6];
+      bars.forEach((b, i) => {
+        b.style.height = (heights[i] * 1.8) + 'px';
+        b.style.background = '#3b82f6';
+      });
+      setTimeout(() => {
+        bars.forEach((b, i) => { b.style.height = heights[i] + 'px'; b.style.background = '#1e3a5f'; });
+      }, 100);
+    }, Math.max(0, (time - this.ctx.currentTime) * 1000));
+  },
+
+  setBpm(bpm) {
+    this.bpm = bpm;
+    document.getElementById('metro-bpm-display').textContent = bpm + ' BPM';
+    document.getElementById('metro-bpm-value').textContent = bpm;
+  },
+
+  stop() {
+    clearTimeout(this.timerId);
+    this.timerId = null;
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+//  H. Scenarios — loaded from scenarios/scenarios.json
+// ═══════════════════════════════════════════════════════════
+
+// Hardcoded fallback (used when JSON fails to load, e.g. offline without cache)
+const SCENARIOS_FALLBACK = {
+  random: {
+    name: { cs: '\uD83C\uDFB2 N\u00e1hodn\u00fd', en: '\uD83C\uDFB2 Random' },
+    description: {
+      cs: 'Tento sc\u00e9n\u00e1\u0159 p\u0159edstavuje situaci s n\u00e1hodn\u011b vygenerovan\u00fdm srde\u010dn\u00edm rytmem.\n\nPravd\u011bpodobnosti rytm\u016f:\n\u2022 VF (ventrikul\u00e1rn\u00ed fibrilace): 55 %\n\u2022 VT (ventrikul\u00e1rn\u00ed tachykardie): 10 %\n\u2022 PEA (bezpulzov\u00e1 elektrick\u00e1 aktivita): 20 %\n\u2022 Asystola: 15 %\n\nU defibrilovateln\u00fdch rytm\u016f (VF/VT) je 70% \u0161ance na \u00fasp\u011b\u0161n\u00fd v\u00fdboj. Tento re\u017eim je vhodn\u00fd pro pokro\u010dil\u00e9 zachr\u00e1nce.',
+      en: 'This scenario presents a situation with a randomly generated heart rhythm.\n\nRhythm probabilities:\n\u2022 VF (ventricular fibrillation): 55%\n\u2022 VT (ventricular tachycardia): 10%\n\u2022 PEA (pulseless electrical activity): 20%\n\u2022 Asystole: 15%\n\nShockable rhythms (VF/VT) have a 70% chance of successful defibrillation. This mode is suitable for advanced rescuers.'
+    }
+  },
+  S1: { rhythm: 'VF', shockable: true, shockSuccess: true, rosc_after: 1, pediatric: false,
+    name: { cs: 'S1 \u2014 Klasick\u00e1 z\u00e1stava (VF)', en: 'S1 \u2014 Classic arrest (VF)' },
+    description: {
+      cs: 'Tento sc\u00e9n\u00e1\u0159 p\u0159edstavuje situaci, kdy dosp\u011bl\u00fd pacient skolaboval se srde\u010dn\u00ed z\u00e1stavou. Srde\u010dn\u00ed rytmus je ventrikul\u00e1rn\u00ed fibrilace (VF) \u2014 defibrilovateln\u00fd rytmus.\n\nPostup je n\u00e1sleduj\u00edc\u00ed:\n1. Zapn\u011bte AED a p\u0159ilo\u017ete elektrody na hrudn\u00edk pacienta\n2. AED analyzuje rytmus a doporu\u010d\u00ed v\u00fdboj\n3. Stiskn\u011bte tla\u010d\u00edtko v\u00fdboje (150 J)\n4. Ihned zahajte KPR \u2014 30 stla\u010den\u00ed hrudn\u00edku, 2 vdechy\n5. Po 2 minut\u00e1ch KPR (4 kola 30:2) AED znovu analyzuje\n6. Anal\u00fdza zjist\u00ed obnoven\u00fd rytmus \u2192 ROSC\n\nV\u00fdcvikov\u00fd c\u00edl: Z\u00e1kladn\u00ed obsluha AED, spr\u00e1vn\u00e9 p\u0159ilo\u017een\u00ed elektrod, pod\u00e1n\u00ed v\u00fdboje, zah\u00e1jen\u00ed KPR. Ide\u00e1ln\u00ed sc\u00e9n\u00e1\u0159 pro za\u010d\u00e1te\u010dn\u00edky.',
+      en: 'This scenario presents a situation where an adult patient collapsed with cardiac arrest. Heart rhythm is ventricular fibrillation (VF) \u2014 a shockable rhythm.\n\nThe procedure is as follows:\n1. Turn on AED and attach pads to patient\'s chest\n2. AED analyzes rhythm and advises shock\n3. Press the shock button (150 J)\n4. Immediately start CPR \u2014 30 chest compressions, 2 breaths\n5. After 2 minutes of CPR (4 rounds of 30:2), AED re-analyzes\n6. Analysis detects restored rhythm \u2192 ROSC\n\nTraining goal: Basic AED operation, correct pad placement, shock delivery, CPR initiation. Ideal scenario for beginners.'
+    }
+  },
+  S2: { rhythm: 'VF', shockable: true, shockSuccess: false, rosc_after: 3, pediatric: false,
+    name: { cs: 'S2 \u2014 Rezistentn\u00ed VF', en: 'S2 \u2014 Refractory VF' },
+    description: {
+      cs: 'Tento sc\u00e9n\u00e1\u0159 p\u0159edstavuje situaci s rezistentn\u00ed ventrikul\u00e1rn\u00ed fibrilac\u00ed \u2014 VF nereaguje na v\u00fdboje.\n\nPostup je n\u00e1sleduj\u00edc\u00ed:\n1. AED analyzuje a doporu\u010d\u00ed v\u00fdboj \u2192 v\u00fdboj pod\u00e1n (150 J)\n2. Ihned KPR \u2014 30:2, 4 kola (cca 2 minuty)\n3. Re-anal\u00fdza \u2192 VF p\u0159etrv\u00e1v\u00e1 \u2192 dal\u0161\u00ed v\u00fdboj\n4. Op\u011bt KPR 2 minuty \u2192 re-anal\u00fdza \u2192 t\u0159et\u00ed v\u00fdboj\n5. Ob\u011bh se neobnovuje \u2014 sc\u00e9n\u00e1\u0159 kon\u010d\u00ed po vy\u010derp\u00e1n\u00ed cykl\u016f\n\nV\u00fdcvikov\u00fd c\u00edl: Zvl\u00e1dnut\u00ed opakovan\u00fdch cykl\u016f v\u00fdboj\u2013KPR, psychick\u00e1 odolnost. I spr\u00e1vn\u011b proveden\u00e1 ne\u00fasp\u011b\u0161n\u00e1 resuscitace je \u00fasp\u011bchem zachr\u00e1nce.',
+      en: 'This scenario presents a situation with refractory ventricular fibrillation \u2014 VF does not respond to shocks.\n\nThe procedure is as follows:\n1. AED analyzes and advises shock \u2192 shock delivered (150 J)\n2. Immediate CPR \u2014 30:2, 4 rounds (~2 minutes)\n3. Re-analysis \u2192 VF persists \u2192 another shock\n4. CPR again 2 minutes \u2192 re-analysis \u2192 third shock\n5. Circulation not restored \u2014 scenario ends after cycle limit\n\nTraining goal: Managing repeated shock-CPR cycles, mental resilience. Correctly performed unsuccessful resuscitation is still a success for the rescuer.'
+    }
+  },
+  S3: { rhythm: 'PEA', shockable: false, rosc_cpr_cycles: 3, pediatric: false,
+    name: { cs: 'S3 \u2014 PEA \u2192 ROSC', en: 'S3 \u2014 PEA \u2192 ROSC' },
+    description: {
+      cs: 'Tento sc\u00e9n\u00e1\u0159 p\u0159edstavuje situaci s bezpulzovou elektrickou aktivitou (PEA). Na EKG je vid\u011bt organizovan\u00fd rytmus, ale srdce ne\u010derp\u00e1 krev. AED v\u00fdboj NEDOPORU\u010cUJE.\n\nPostup je n\u00e1sleduj\u00edc\u00ed:\n1. AED analyzuje \u2192 \u00abV\u00fdboj nedoporu\u010den\u00bb \u2192 zachr\u00e1nce za\u010d\u00edn\u00e1 KPR\n2. KPR 30:2, 4 kola (cca 2 minuty)\n3. Re-anal\u00fdza \u2192 op\u011bt \u00abv\u00fdboj nedoporu\u010den\u00bb \u2192 pokra\u010duje KPR\n4. Po 3. cyklu re-anal\u00fdzy AED detekuje obnoven\u00fd rytmus \u2192 ROSC\n\nV\u00fdcvikov\u00fd c\u00edl: Pochopen\u00ed, \u017ee \u00abv\u00fdboj nedoporu\u010den\u00bb NEZNAMEN\u00c1 konec \u2014 KPR mus\u00ed pokra\u010dovat! Kvalitn\u00ed komprese mohou obnovit ob\u011bh i bez v\u00fdboje.',
+      en: 'This scenario presents a situation with pulseless electrical activity (PEA). ECG shows organized rhythm, but the heart is not pumping. AED does NOT advise shock.\n\nThe procedure is as follows:\n1. AED analyzes \u2192 \u00abNo shock advised\u00bb \u2192 rescuer starts CPR\n2. CPR 30:2, 4 rounds (~2 minutes)\n3. Re-analysis \u2192 again \u00abno shock advised\u00bb \u2192 CPR continues\n4. After 3rd re-analysis cycle, AED detects restored rhythm \u2192 ROSC\n\nTraining goal: Understanding that \u00abno shock advised\u00bb does NOT mean stop \u2014 CPR must continue! Quality compressions can restore circulation without a shock.'
+    }
+  },
+  S4: { rhythm: 'ASY', shockable: false, rosc_cpr_cycles: 0, pediatric: false,
+    name: { cs: 'S4 \u2014 Asystola (bez ROSC)', en: 'S4 \u2014 Asystole (no ROSC)' },
+    description: {
+      cs: 'Tento sc\u00e9n\u00e1\u0159 p\u0159edstavuje situaci s asystolou \u2014 \u017e\u00e1dn\u00e1 elektrick\u00e1 aktivita srdce (rovn\u00e1 \u010d\u00e1ra na EKG). Nejz\u00e1va\u017en\u011bj\u0161\u00ed forma z\u00e1stavy.\n\nPostup je n\u00e1sleduj\u00edc\u00ed:\n1. AED analyzuje \u2192 \u00abV\u00fdboj nedoporu\u010den\u00bb\n2. Zachr\u00e1nce prov\u00e1d\u00ed KPR 30:2 dokud nedoraz\u00ed z\u00e1chrann\u00e1 slu\u017eba\n3. Ka\u017ed\u00e9 2 minuty re-anal\u00fdza \u2014 opakovan\u011b \u00abv\u00fdboj nedoporu\u010den\u00bb\n4. Ob\u011bh se neobnovuje \u2014 asystola m\u00e1 p\u0159e\u017eit\u00ed pod 5 %\n\nV\u00fdcvikov\u00fd c\u00edl: Zvl\u00e1dnut\u00ed emo\u010dn\u011b n\u00e1ro\u010dn\u00e9 situace. Spr\u00e1vn\u011b proveden\u00e1 ne\u00fasp\u011b\u0161n\u00e1 resuscitace je st\u00e1le spr\u00e1vn\u00e1 resuscitace. Zachr\u00e1nce nem\u00e1 m\u00edt pocit viny.',
+      en: 'This scenario presents a situation with asystole \u2014 no electrical activity (flatline on ECG). The most severe form of cardiac arrest.\n\nThe procedure is as follows:\n1. AED analyzes \u2192 \u00abNo shock advised\u00bb\n2. Rescuer performs CPR 30:2 until emergency services arrive\n3. Re-analysis every 2 minutes \u2014 repeatedly \u00abno shock advised\u00bb\n4. Circulation not restored \u2014 asystole survival rate is below 5%\n\nTraining goal: Managing an emotionally challenging situation. Correctly performed unsuccessful resuscitation is still correct resuscitation. The rescuer should never feel guilty.'
+    }
+  },
+  S5: { rhythm: 'VF', shockable: true, shockSuccess: true, rosc_after: 1, pediatric: true,
+    name: { cs: 'S5 \u2014 D\u00edt\u011b (pediatrick\u00fd)', en: 'S5 \u2014 Child (pediatric)' },
+    description: {
+      cs: 'Tento sc\u00e9n\u00e1\u0159 p\u0159edstavuje situaci, kdy d\u00edt\u011b (< 8 let) skolabovalo se srde\u010dn\u00ed z\u00e1stavou. Energie v\u00fdboje je sn\u00ed\u017eena na 50 J (d\u011btsk\u00fd kl\u00ed\u010d).\n\nPostup je n\u00e1sleduj\u00edc\u00ed:\n1. Vlo\u017e\u00edte d\u011btsk\u00fd kl\u00ed\u010d \u2192 AED hl\u00e1s\u00ed sn\u00ed\u017een\u00ed energie na 50 J\n2. P\u0159ilo\u017e\u00edte elektrody\n3. AED analyzuje \u2192 VF \u2192 doporu\u010d\u00ed v\u00fdboj\n4. V\u00fdboj 50 J \u2192 ROSC po prvn\u00edm v\u00fdboji\n\nSpecifika: Hloubka kompres\u00ed 1/3 pr\u016fm\u011bru hrudn\u00edku (u 6let\u00e9ho cca 4\u20135 cm). Frekvence 100\u2013120/min. Pokud nen\u00ed d\u011btsk\u00fd kl\u00ed\u010d, pou\u017eijte standardn\u00ed energii \u2014 lep\u0161\u00ed v\u00fdboj vy\u0161\u0161\u00ed energi\u00ed ne\u017e \u017e\u00e1dn\u00fd v\u00fdboj.',
+      en: 'This scenario presents a situation where a child (< 8 years) collapsed with cardiac arrest. Shock energy is reduced to 50 J (child key).\n\nThe procedure is as follows:\n1. Insert child key \u2192 AED announces energy reduced to 50 J\n2. Attach pads\n3. AED analyzes \u2192 VF \u2192 advises shock\n4. Shock 50 J \u2192 ROSC after first shock\n\nSpecifics: Compression depth 1/3 of chest diameter (for 6-year-old approx. 4\u20135 cm). Rate 100\u2013120/min. If child key unavailable, use standard energy \u2014 a higher-energy shock is better than no shock.'
+    }
+  },
+  S6: { rhythm: 'VF', shockable: true, shockSuccess: true, rosc_after: 2, pediatric: false,
+    name: { cs: 'S6 \u2014 Pozdn\u00ed p\u0159\u00edjezd', en: 'S6 \u2014 Delayed response' },
+    description: {
+      cs: 'Tento sc\u00e9n\u00e1\u0159 p\u0159edstavuje situaci, kdy AED bylo doru\u010deno se zpo\u017ed\u011bn\u00edm. Pacient je v z\u00e1stav\u011b ji\u017e n\u011bkolik minut. Ka\u017edou minutou bez defibrilace kles\u00e1 \u0161ance na ROSC o 7\u201310 %.\n\nPostup je n\u00e1sleduj\u00edc\u00ed:\n1. AED analyzuje \u2192 VF \u2192 doporu\u010d\u00ed v\u00fdboj\n2. Prvn\u00ed v\u00fdboj (150 J) \u2192 NEOBNOVUJE ob\u011bh (srdce bylo p\u0159\u00edli\u0161 dlouho v z\u00e1stav\u011b)\n3. Ihned KPR \u2014 30:2, 4 kola (2 minuty) \u2192 komprese prokrv\u00ed srdce\n4. Re-anal\u00fdza \u2192 VF p\u0159etrv\u00e1v\u00e1 \u2192 druh\u00fd v\u00fdboj\n5. Po druh\u00e9m v\u00fdboji \u2192 ROSC!\n\nV\u00fdcvikov\u00fd c\u00edl: Pochopen\u00ed, \u017ee prvn\u00ed v\u00fdboj nemus\u00ed b\u00fdt \u00fasp\u011b\u0161n\u00fd. KPR mezi v\u00fdboji dramaticky zvy\u0161uje \u0161anci na \u00fasp\u011bch dal\u0161\u00edho v\u00fdboje. Motivace pokra\u010dovat.',
+      en: 'This scenario presents a situation where AED arrived with a delay. Patient has been in arrest for several minutes. Every minute without defibrillation reduces ROSC chance by 7\u201310%.\n\nThe procedure is as follows:\n1. AED analyzes \u2192 VF \u2192 advises shock\n2. First shock (150 J) \u2192 does NOT restore circulation (heart in arrest too long)\n3. Immediate CPR \u2014 30:2, 4 rounds (2 minutes) \u2192 compressions perfuse the heart\n4. Re-analysis \u2192 VF persists \u2192 second shock\n5. After second shock \u2192 ROSC!\n\nTraining goal: Understanding that the first shock may not succeed. CPR between shocks dramatically increases the chance of the next shock succeeding. Motivation to keep going.'
+    }
+  },
+};
+
+const ScenarioLoader = {
+  data: null,
+  loaded: false,
+  async load() {
+    // Try fetch first (works on http:// servers)
+    try {
+      const resp = await fetch('scenarios/scenarios.json');
+      if (!resp.ok) throw new Error(resp.status);
+      this.data = await resp.json();
+      this.loaded = true;
+    } catch {
+      // fetch fails on file:// protocol — try XMLHttpRequest as fallback
+      try {
+        this.data = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', 'scenarios/scenarios.json', true);
+          xhr.onload = () => {
+            if (xhr.status === 200 || xhr.status === 0) {
+              resolve(JSON.parse(xhr.responseText));
+            } else reject();
+          };
+          xhr.onerror = reject;
+          xhr.send();
+        });
+        this.loaded = true;
+      } catch {
+        console.warn('scenarios.json not loaded — using inline fallback');
+        this.data = null;
+      }
+    }
+    this._populateSelector();
+  },
+  get(id) { return this.data?.[id] ?? SCENARIOS_FALLBACK[id]; },
+  getAll() { return this.data ?? SCENARIOS_FALLBACK; },
+  _populateSelector() {
+    const sel = document.getElementById('scenario-selector');
+    if (!sel) return;
+    const prevValue = sel.value || state.selectedScenario || 'S1';
+    sel.textContent = '';
+
+    const source = this.getAll();
+    for (const [id, sc] of Object.entries(source)) {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = sc.name?.[currentLang] ?? id;
+      sel.appendChild(opt);
+    }
+    // Restore previous selection
+    if (sel.querySelector('option[value="' + prevValue + '"]')) {
+      sel.value = prevValue;
+    } else {
+      sel.value = sel.options[0]?.value ?? 'S1';
+    }
+    if (typeof updateScenarioDetail === 'function') {
+      updateScenarioDetail(sel.value);
+    }
+  },
+};
+
+function weightedRandom(weights) {
+  const entries = Object.entries(weights);
+  const total = entries.reduce((s, [, w]) => s + w, 0);
+  let r = Math.random() * total;
+  for (const [key, w] of entries) { r -= w; if (r <= 0) return key; }
+  return entries[entries.length - 1][0];
+}
+
+function generateScenario() {
+  const rhythm = weightedRandom({ VF: 0.55, VT: 0.10, PEA: 0.20, ASY: 0.15 });
+  const shockable = ['VF', 'VT'].includes(rhythm);
+  if (shockable) {
+    return { rhythm, shockable, shockSuccess: Math.random() < 0.70,
+             rosc_after: Math.floor(Math.random() * 3) + 1 };
+  }
+  const roscChance = rhythm === 'PEA' ? 0.30 : 0.10;
+  return { rhythm, shockable, pediatric: false,
+           rosc_cpr_cycles: Math.random() < roscChance ? (Math.floor(Math.random() * 2) + 2) : 0 };
+}
+
+// ── Tab system ──
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+  if (tab === 'simulation') {
+    document.getElementById('tab-simulation').classList.add('active');
+    document.getElementById('tab-btn-sim').classList.add('active');
+  } else {
+    document.getElementById('tab-scenario-info').classList.add('active');
+    document.getElementById('tab-btn-scen').classList.add('active');
+  }
+}
+
+function updateScenarioDetail(id) {
+  const sc = ScenarioLoader.get(id);
+  if (!sc) return;
+  const lang = currentLang;
+  document.getElementById('scen-detail-name').textContent = sc.name?.[lang] ?? id;
+  document.getElementById('scen-detail-desc').textContent = sc.description?.[lang] ?? '';
+
+  // Build params grid
+  const paramsEl = document.getElementById('scen-detail-params');
+  paramsEl.textContent = '';
+  if (id === 'random') return;  // random has no fixed params
+
+  const params = [
+    [t('ui','param_rhythm'), sc.rhythm ?? '?'],
+    [t('ui','param_shockable'), sc.shockable ? t('ui','val_yes') : t('ui','val_no')],
+    [t('ui','param_energy'), sc.pediatric ? '50 J' : '150 J'],
+    [t('ui','param_outcome'), (sc.shockable ? sc.shockSuccess : (sc.rosc_cpr_cycles > 0)) ? t('ui','val_rosc') : t('ui','val_no_rosc')],
+  ];
+  for (const [label, value] of params) {
+    const div = document.createElement('div');
+    div.className = 'scenario-param';
+    div.innerHTML = '<div class="scenario-param-label"></div><div class="scenario-param-value"></div>';
+    div.querySelector('.scenario-param-label').textContent = label;
+    div.querySelector('.scenario-param-value').textContent = value;
+    paramsEl.appendChild(div);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  I. State Machine
+// ═══════════════════════════════════════════════════════════
+const state = {
+  phase: 'IDLE',
+  pad1: false,
+  pad2: false,
+  powered: false,
+  shockReady: false,
+  shockCount: 0,
+  cprPresses: 0,
+  cprCycles: 0,
+  totalCycles: 0,
+  sessionStart: null,
+  cprStart: null,
+  compressionTimes: [],
+  scenario: null,
+  selectedScenario: 'S1',
+  pediatric: false,
+  joulesToDeliver: 150,
+  iButtonFlashInterval: null,
+  iButtonFlashEnd: null,
+  _pad1PromptTimer: null,
+  cprTimerInterval: null,
+  scenarioTimerInterval: null,
+  breathsTimeout: null,
+};
+
+function transitionTo(newPhase) {
+  const prev = state.phase;
+  state.phase = newPhase;
+
+  // Clean up i-button blink
+  if (newPhase !== 'SHOCK_READY') {
+    clearInterval(state.iButtonFlashInterval);
+    document.getElementById('btn-info').classList.remove('blink');
+    state.iButtonFlashEnd = null;
+  }
+
+  // Clear breaths timeout
+  if (newPhase !== 'CPR_BREATHS') clearTimeout(state.breathsTimeout);
+
+  // Reset all LEDs
+  const ledReady = document.getElementById('led-ready');
+  const ledReadyS = document.getElementById('led-ready-s');
+  const ledCharging = document.getElementById('led-charging');
+  const ledShock = document.getElementById('led-shock');
+  [ledReady, ledReadyS, ledCharging, ledShock].forEach(l => {
+    if (l) l.className = 'led';
+  });
+
+  // Shock button state
+  const btnShock = document.getElementById('btn-shock');
+  btnShock.classList.remove('shock-ready');
+
+  // CPR controls visibility
+  const cprControls = document.getElementById('cpr-controls');
+  const btnCompress = document.getElementById('btn-compress');
+  const btnBreaths = document.getElementById('btn-breaths');
+  const metronome = document.getElementById('metronome-section');
+  const mainInst = document.getElementById('main-instruction');
+  mainInst.className = '';
+
+  // Charging bar
+  document.getElementById('charging-bar-wrap').hidden = true;
+
+  // Body class for running state
+  const isRunning = newPhase !== 'IDLE';
+  document.body.classList.toggle('aed-running', isRunning);
+
+  switch (newPhase) {
+    case 'IDLE': {
+      state.powered = false;
+      state.pad1 = false;
+      state.pad2 = false;
+      state.shockReady = false;
+      state.shockCount = 0;
+      state.cprPresses = 0;
+      state.cprCycles = 0;
+      state.totalCycles = 0;
+      state.sessionStart = null;
+      state.cprStart = null;
+      state.compressionTimes = [];
+      state.pediatric = false;
+      state.joulesToDeliver = 150;
+      clearInterval(state.cprTimerInterval);
+      clearInterval(state.scenarioTimerInterval);
+      MetronomeEngine.stop();
+      SpeechEngine.synth.cancel();
+
+      document.getElementById('btn-on').classList.remove('powered');
+      // Reset all pad zones in both SVGs
+      document.querySelectorAll('.pad-zone').forEach(z => z.classList.remove('placed'));
+      document.querySelectorAll('.pad-cable').forEach(c => c.setAttribute('stroke', '#1a2535'));
+      document.getElementById('conn-left').classList.remove('placed');
+      document.getElementById('conn-right').classList.remove('placed');
+      setPadMode('adult');
+      cprControls.classList.remove('visible');
+      btnCompress.classList.remove('visible');
+      btnBreaths.classList.remove('visible');
+      metronome.classList.remove('visible');
+      mainInst.textContent = '';
+      document.getElementById('scenario-status').textContent = t('ui', 'scenario_ready');
+      document.getElementById('result-modal').hidden = true;
+      document.getElementById('zoll-cpr-num').textContent = '--';
+      document.getElementById('log-entries').textContent = '';
+      EcgEngine.setMode('idle');
+      break;
+    }
+
+    case 'BOOTING': {
+      state.powered = true;
+      state.sessionStart = Date.now();
+      document.getElementById('btn-on').classList.add('powered');
+      ledReady.classList.add('green-blink');
+      ledReadyS.classList.add('green-blink');
+      EcgEngine.setMode('flatline');
+      mainInst.textContent = currentLang === 'cs' ? 'SPOU\u0160T\u00cdM...' : 'BOOTING...';
+      AudioEngine.sweep(440, 880, 0.8, 'sine', 0.20);
+      addLog('powered_on', 'info');
+
+      applyScenario();
+
+      // Start scenario timer
+      clearInterval(state.scenarioTimerInterval);
+      state.scenarioTimerInterval = setInterval(() => {
+        if (!state.sessionStart) return;
+        const s = Math.floor((Date.now() - state.sessionStart) / 1000);
+        const mm = String(Math.floor(s / 60)).padStart(2, '0');
+        const ss = String(s % 60).padStart(2, '0');
+        document.getElementById('scenario-status').textContent = t('ui', 'scenario_running') + ' \u00B7 ' + mm + ':' + ss;
+      }, 500);
+
+      setTimeout(() => {
+        if (state.phase === 'BOOTING') transitionTo('PAD_PROMPT');
+      }, 1500);
+      break;
+    }
+
+    case 'PAD_PROMPT': {
+      ledReady.classList.add('green');
+      ledReadyS.classList.add('green');
+      EcgEngine.setMode('flatline');
+
+      if (state.pad1 && state.pad2) {
+        // Both pads pre-placed before power on — skip pad prompts
+        addLog('pad1_placed', 'info');
+        addLog('pad2_placed', 'info');
+        SpeechEngine.say('analyzing', 'high');
+        mainInst.textContent = t('voice', 'analyzing')?.text || '';
+        setTimeout(() => {
+          if (state.phase === 'PAD_PROMPT') transitionTo('ANALYZING');
+        }, VoiceTiming.delay('analyzing'));
+      } else if (state.pad1 || state.pad2) {
+        // One pad pre-placed — prompt for the missing one
+        SpeechEngine.say('start');
+        const missingKey = state.pad1 ? 'pad2_prompt' : 'pad1_prompt';
+        addLog(state.pad1 ? 'pad1_placed' : 'pad2_placed', 'info');
+        mainInst.textContent = t('voice', 'start')?.text || '';
+        state._pad1PromptTimer = setTimeout(() => {
+          if (state.phase === 'PAD_PROMPT') {
+            SpeechEngine.say(missingKey);
+            mainInst.textContent = t('voice', missingKey)?.text || '';
+          }
+        }, VoiceTiming.delay('start'));
+      } else {
+        // No pads — standard flow
+        SpeechEngine.say('start');
+        mainInst.textContent = t('voice', 'start')?.text || '';
+        state._pad1PromptTimer = setTimeout(() => {
+          if (state.phase === 'PAD_PROMPT' && !state.pad1 && !state.pad2) {
+            SpeechEngine.say('pad1_prompt');
+            mainInst.textContent = t('voice', 'pad1_prompt')?.text || '';
+          }
+        }, VoiceTiming.delay('start'));
+      }
+      break;
+    }
+
+    case 'PAD_PROMPT_2': {
+      // This state is kept for compatibility but works same as PAD_PROMPT
+      // connectPad() handles both states identically
+      ledReady.classList.add('green');
+      ledReadyS.classList.add('green');
+      break;
+    }
+
+    case 'ANALYZING': {
+      ledReady.classList.add('yellow-blink');
+      ledReadyS.classList.add('yellow-blink');
+      // Show actual rhythm being analyzed: VF for shockable, PEA/asystole for non-shockable
+      const analyzeEcg = state.scenario.shockable ? 'analyzing' :
+        state.scenario.rhythm === 'PEA' ? 'pea' : 'asystola';
+      EcgEngine.setMode(analyzeEcg);
+      SpeechEngine.say('analyzing');
+      addLog('analyzing', 'warn');
+      mainInst.classList.add('warn');
+      mainInst.textContent = t('voice', 'analyzing')?.text || '';
+
+      // Analysis beeps
+      let beepCount = 0;
+      const beepInterval = setInterval(() => {
+        if (beepCount >= 4 || state.phase !== 'ANALYZING') { clearInterval(beepInterval); return; }
+        AudioEngine.beep(1000, 0.2, 'square', 0.25);
+        beepCount++;
+      }, 400);
+
+      // Wait for 'analyzing' voice to finish, then announce result
+      const analysisDuration = VoiceTiming.delay('analyzing', Math.random() * 1500);
+      setTimeout(() => {
+        if (state.phase !== 'ANALYZING') return;
+        if (state.scenario.shockable) {
+          addLog('vf_detected', 'alert');
+          transitionTo('SHOCK_CHARGING');
+        } else {
+          if (state.scenario.rhythm === 'PEA') addLog('pea_detected', 'warn');
+          else addLog('asy_detected', 'warn');
+          SpeechEngine.say('no_shock', 'high');
+          mainInst.textContent = t('voice', 'no_shock')?.text || '';
+          // Wait for 'no_shock' voice before CPR_PROMPT
+          setTimeout(() => {
+            if (state.phase === 'ANALYZING') transitionTo('CPR_PROMPT');
+          }, VoiceTiming.delay('no_shock'));
+        }
+      }, analysisDuration);
+      break;
+    }
+
+    case 'REANALYZE': {
+      ledReady.classList.add('yellow-blink');
+      ledReadyS.classList.add('yellow-blink');
+      // Show actual rhythm during re-analysis
+      const reanalyzeEcg = state.scenario.shockable ? 'analyzing' :
+        state.scenario.rhythm === 'PEA' ? 'pea' : 'asystola';
+      EcgEngine.setMode(reanalyzeEcg);
+      SpeechEngine.say('reanalyze');
+      addLog('reanalyze', 'warn');
+      mainInst.classList.add('warn');
+      mainInst.textContent = t('voice', 'reanalyze')?.text || '';
+
+      // Wait for 'reanalyze' voice to finish
+      const dur = VoiceTiming.delay('reanalyze', Math.random() * 1500);
+      setTimeout(() => {
+        if (state.phase !== 'REANALYZE') return;
+        const sc = state.scenario;
+        const reanalysisCount = Math.ceil(state.totalCycles / 4); // how many re-analyses done
+
+        // Check ROSC for shockable rhythms (after N shocks)
+        if (sc.shockable && sc.shockSuccess && state.shockCount >= sc.rosc_after) {
+          transitionTo('END_SESSION');
+          return;
+        }
+        // Check ROSC for non-shockable rhythms (after N CPR re-analysis cycles)
+        if (!sc.shockable && sc.rosc_cpr_cycles > 0 && reanalysisCount >= sc.rosc_cpr_cycles) {
+          transitionTo('END_SESSION');
+          return;
+        }
+        // Safety limit: max 8 re-analyses (~16 min) — end session
+        if (reanalysisCount >= 8) {
+          transitionTo('END_SESSION');
+          return;
+        }
+        if (sc.shockable) {
+          addLog('vf_detected', 'alert');
+          transitionTo('SHOCK_CHARGING');
+        } else {
+          if (sc.rhythm === 'PEA') addLog('pea_detected', 'warn');
+          else addLog('asy_detected', 'warn');
+          SpeechEngine.say('no_shock', 'high');
+          mainInst.textContent = t('voice', 'no_shock')?.text || '';
+          // 'no_shock' CZ ~7.1s, EN ~7.2s — wait before CPR_PROMPT
+          setTimeout(() => {
+            if (state.phase === 'REANALYZE') transitionTo('CPR_PROMPT');
+          }, VoiceTiming.delay('no_shock'));
+        }
+      }, dur);
+      break;
+    }
+
+    case 'SHOCK_CHARGING': {
+      ledCharging.classList.add('red-blink');
+      EcgEngine.setMode('vf_strong');
+      const shockKey = state.shockCount === 0 ? 'shock_advised' :
+                       state.shockCount === 1 ? 'shock2' : 'shock3';
+      SpeechEngine.say(shockKey);
+      addLog('charging', 'alert');
+      mainInst.classList.add('alert');
+      mainInst.textContent = t('voice', shockKey)?.text || '';
+
+      document.getElementById('charging-bar-wrap').hidden = false;
+      const fill = document.getElementById('charging-bar-fill');
+      fill.style.width = '0%';
+      AudioEngine.sweep(200, 2000, chargeDur, 'sawtooth', 0.22);
+
+      // Charging bar: fill duration matches shock_advised voice length
+      let progress = 0;
+      const chargeDur = VoiceTiming.seconds(shockKey) || 7; // seconds
+      const chargeStep = 100 / (chargeDur * 10); // 100% / (dur * 10 steps/s)
+      const chargeInterval = setInterval(() => {
+        if (state.phase !== 'SHOCK_CHARGING') { clearInterval(chargeInterval); return; }
+        progress += chargeStep;
+        fill.style.width = Math.min(progress, 100) + '%';
+        if (progress >= 100) {
+          clearInterval(chargeInterval);
+          transitionTo('SHOCK_READY');
+        }
+      }, 100);
+      break;
+    }
+
+    case 'SHOCK_READY': {
+      ledShock.classList.add('red-blink');
+      btnShock.classList.add('shock-ready');
+      EcgEngine.setMode('vf_strong');
+      SpeechEngine.say('shock_ready', 'high');
+      mainInst.classList.add('alert');
+      mainInst.textContent = t('voice', 'shock_ready')?.text || '';
+
+      // i-button blink for 30s
+      document.getElementById('btn-info').classList.add('blink');
+      state.iButtonFlashEnd = Date.now() + 30000;
+      state.iButtonFlashInterval = setInterval(() => {
+        if (Date.now() > state.iButtonFlashEnd) {
+          clearInterval(state.iButtonFlashInterval);
+          document.getElementById('btn-info').classList.remove('blink');
+        }
+      }, 1000);
+      break;
+    }
+
+    case 'SHOCK_DELIVERED': {
+      state.shockCount++;
+      state.shockReady = false;
+
+      // Flash
+      const flash = document.getElementById('shock-flash');
+      flash.classList.add('active');
+      setTimeout(() => flash.classList.remove('active'), 80);
+
+      AudioEngine.beep(150, 0.3, 'square', 0.55);
+      EcgEngine.setMode('shock');
+      SpeechEngine.say('shock_clear', 'high');
+
+      const joules = state.joulesToDeliver;
+      addLog('shock', 'alert', { n: state.shockCount, j: joules });
+      mainInst.classList.add('alert');
+      mainInst.textContent = t('voice', 'shock_clear')?.text || '';
+
+      // Wait for 'shock_clear', then play 'shock_delivered'
+      const clearDelay = VoiceTiming.delay('shock_clear');
+      setTimeout(() => {
+        if (state.phase !== 'SHOCK_DELIVERED') return;
+        SpeechEngine.say('shock_delivered', 'high');
+        mainInst.textContent = t('voice', 'shock_delivered')?.text || '';
+      }, clearDelay);
+
+      // Transition to CPR after both voices finish
+      setTimeout(() => {
+        if (state.phase !== 'SHOCK_DELIVERED') return;
+        state.cprCycles = 0;
+        transitionTo('CPR_PROMPT');
+      }, clearDelay + VoiceTiming.delay('shock_delivered'));
+      break;
+    }
+
+    case 'CPR_PROMPT': {
+      ledReady.classList.add('green');
+      ledReadyS.classList.add('green');
+      // Determine underlying rhythm for CPR display
+      const sc = state.scenario;
+      let cprUnderlying;
+      if (sc.shockable) {
+        // After shock: VF may persist (weak) or stunned flatline
+        if (state.shockCount > 0) {
+          // After shock(s): if approaching ROSC, show emerging rhythm
+          const nearROSC = sc.shockSuccess && state.shockCount >= (sc.rosc_after - 1);
+          cprUnderlying = nearROSC ? 'rosc_emerging' : 'vf_weak';
+        } else {
+          cprUnderlying = 'vf_weak'; // no shock yet, VF persists
+        }
+      } else if (sc.rhythm === 'PEA') {
+        // PEA: organized electrical activity but no pulse
+        const reanalysisCount = Math.ceil(state.totalCycles / 4);
+        const nearROSC = sc.rosc_cpr_cycles > 0 && reanalysisCount >= (sc.rosc_cpr_cycles - 1);
+        cprUnderlying = nearROSC ? 'rosc_emerging' : 'pea';
+      } else {
+        // Asystole: essentially flat
+        cprUnderlying = 'asystola';
+      }
+      EcgEngine.setMode('flatline', cprUnderlying);
+      SpeechEngine.say('cpr_start', 'high');
+      mainInst.classList.add('ok');
+      mainInst.textContent = t('voice', 'cpr_start')?.text || '';
+      addLog('cpr_start', 'info');
+
+      // Transition to CPR_ACTIVE after cpr_start voice finishes
+      setTimeout(() => {
+        if (state.phase === 'CPR_PROMPT') transitionTo('CPR_ACTIVE');
+      }, VoiceTiming.delay('cpr_start'));
+      break;
+    }
+
+    case 'CPR_ACTIVE': {
+      ledReady.classList.add('green');
+      ledReadyS.classList.add('green');
+      EcgEngine.setMode('cpr_artifact');  // uses underlyingRhythm set in CPR_PROMPT
+      state.cprPresses = 0;
+      if (!state.cprStart) state.cprStart = Date.now();
+
+      cprControls.classList.add('visible');
+      btnCompress.classList.add('visible');
+      btnBreaths.classList.remove('visible');
+      metronome.classList.add('visible');
+      mainInst.classList.add('ok');
+      mainInst.textContent = t('ui', 'btn_compress');
+
+      updateCprDisplay();
+      addLog('cpr_cycle', 'info', { n: state.cprCycles + 1 });
+
+      // Start CPR timer
+      clearInterval(state.cprTimerInterval);
+      state.cprTimerInterval = setInterval(updateCprTimer, 500);
+
+      // Start metronome
+      if (AudioEngine.ctx) MetronomeEngine.start(AudioEngine.ctx);
+      break;
+    }
+
+    case 'CPR_BREATHS': {
+      ledReady.classList.add('green');
+      ledReadyS.classList.add('green');
+      // During breaths pause: show underlying rhythm without compression artifacts
+      EcgEngine.setMode(EcgEngine.underlyingRhythm);
+      SpeechEngine.say('cpr_30', 'high');
+      MetronomeEngine.stop();
+      btnCompress.classList.remove('visible');
+      btnBreaths.classList.add('visible');
+      mainInst.classList.add('ok');
+      mainInst.textContent = t('voice', 'cpr_30')?.text || '';
+
+      // Auto-continue after 15s
+      state.breathsTimeout = setTimeout(() => {
+        if (state.phase === 'CPR_BREATHS') doBreaths();
+      }, 15000);
+      break;
+    }
+
+    case 'END_SESSION': {
+      clearInterval(state.cprTimerInterval);
+      clearInterval(state.scenarioTimerInterval);
+      MetronomeEngine.stop();
+      cprControls.classList.remove('visible');
+      metronome.classList.remove('visible');
+
+      const sc = state.scenario;
+      const reanalysisCount = Math.ceil(state.totalCycles / 4);
+      const isROSC = sc.shockable
+        ? (sc.shockSuccess && state.shockCount >= sc.rosc_after)
+        : (sc.rosc_cpr_cycles > 0 && reanalysisCount >= sc.rosc_cpr_cycles);
+      if (isROSC) {
+        EcgEngine.setMode('rosc');
+        ledReady.classList.add('green');
+        ledReadyS.classList.add('green');
+        SpeechEngine.say('rosc', 'high');
+        addLog('rosc', 'info');
+        mainInst.classList.add('ok');
+        mainInst.textContent = t('voice', 'rosc')?.text || '';
+        // 'rosc' voice: CZ ~8.8s, EN ~8.3s — show results after it finishes
+        setTimeout(() => showResults(), VoiceTiming.delay('rosc'));
+      } else {
+        EcgEngine.setMode('asystola');
+        SpeechEngine.say('end_session', 'high');
+        mainInst.textContent = t('voice', 'end_session')?.text || '';
+        // 'end_session' voice: CZ ~5.3s, EN ~4.8s
+        setTimeout(() => showResults(), VoiceTiming.delay('end_session'));
+      }
+      break;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  J. UI Controller
+// ═══════════════════════════════════════════════════════════
+function pressPower() {
+  if (state.phase === 'IDLE') {
+    transitionTo('BOOTING');
+  } else {
+    SpeechEngine.say('off');
+    addLog('powered_off', 'muted');
+    transitionTo('IDLE');
+  }
+}
+
+function pressInfo() {
+  // Info button provides additional guidance
+}
+
+function pressShock() {
+  if (state.phase !== 'SHOCK_READY') return;
+  transitionTo('SHOCK_DELIVERED');
+}
+
+// Pad mode: adult vs child electrode placement
+function setPadMode(mode) {
+  const isChild = (mode === 'child');
+  document.getElementById('pad-svg-adult').classList.toggle('active', !isChild);
+  document.getElementById('pad-svg-child').classList.toggle('active', isChild);
+  document.querySelectorAll('.pad-mode-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.mode === mode));
+  state.pediatric = isChild;
+  state.joulesToDeliver = isChild ? 50 : 150;
+  if (isChild && state.powered) SpeechEngine.say('pediatric_on', 'high');
+}
+
+// Get correct pad element IDs based on current mode
+function _padId(n) {
+  const suffix = state.pediatric ? '-child' : '';
+  return n === 1
+    ? { zone: 'pad1-zone' + suffix, cable: 'cable1' + suffix }
+    : { zone: 'pad2-zone' + suffix, cable: 'cable2' + suffix };
+}
+
+function connectPad(n) {
+  // Accept pads in IDLE (before power on), PAD_PROMPT, or PAD_PROMPT_2
+  const allowed = ['IDLE', 'PAD_PROMPT', 'PAD_PROMPT_2'];
+  if (!allowed.includes(state.phase)) return;
+
+  const ids = _padId(n);
+  const alreadyPlaced = (n === 1) ? state.pad1 : state.pad2;
+  if (alreadyPlaced) return;
+
+  const isPrePlacement = (state.phase === 'IDLE');
+
+  // Place this pad visually
+  if (n === 1) {
+    state.pad1 = true;
+    clearTimeout(state._pad1PromptTimer);
+    document.getElementById(ids.zone).classList.add('placed');
+    document.getElementById('conn-left').classList.add('placed');
+    document.getElementById(ids.cable).setAttribute('stroke', '#22c55e');
+    if (!isPrePlacement) {
+      SpeechEngine.say('pad1_ok', 'high');
+      addLog('pad1_placed', 'info');
+      document.getElementById('main-instruction').textContent = t('voice', 'pad1_ok')?.text || '';
+    }
+  } else {
+    state.pad2 = true;
+    document.getElementById(ids.zone).classList.add('placed');
+    document.getElementById('conn-right').classList.add('placed');
+    document.getElementById(ids.cable).setAttribute('stroke', '#22c55e');
+    if (!isPrePlacement) {
+      SpeechEngine.say('pad2_ok', 'high');
+      addLog('pad2_placed', 'info');
+      document.getElementById('main-instruction').textContent = t('voice', 'pad2_ok')?.text || '';
+    }
+  }
+
+  // If device is off (IDLE), just visual placement — no transitions
+  if (isPrePlacement) return;
+
+  // Wait for the pad_ok voice that just played
+  const okDelay = VoiceTiming.delay(n === 1 ? 'pad1_ok' : 'pad2_ok');
+
+  // Both pads placed? → go to ANALYZING after voice finishes
+  if (state.pad1 && state.pad2) {
+    setTimeout(() => {
+      if (state.phase === 'PAD_PROMPT' || state.phase === 'PAD_PROMPT_2') {
+        transitionTo('ANALYZING');
+      }
+    }, okDelay);
+  } else {
+    // One pad placed — prompt for the other one
+    const missingPad = state.pad1 ? 2 : 1;
+    const promptKey = missingPad === 1 ? 'pad1_prompt' : 'pad2_prompt';
+    setTimeout(() => {
+      if ((state.phase === 'PAD_PROMPT' || state.phase === 'PAD_PROMPT_2')
+          && !(state.pad1 && state.pad2)) {
+        SpeechEngine.say(promptKey);
+        document.getElementById('main-instruction').textContent = t('voice', promptKey)?.text || '';
+      }
+    }, okDelay);
+  }
+}
+
+function doCompress() {
+  if (state.phase !== 'CPR_ACTIVE') return;
+  state.cprPresses++;
+  state.compressionTimes.push(performance.now());
+  if (navigator.vibrate) navigator.vibrate(40);
+  updateCprDisplay();
+  document.getElementById('zoll-cpr-num').textContent = state.cprPresses;
+
+  if (state.cprPresses === 15) SpeechEngine.say('cpr_15');
+  if (state.cprPresses >= 30) transitionTo('CPR_BREATHS');
+}
+
+function doBreaths() {
+  if (state.phase !== 'CPR_BREATHS') return;
+  clearTimeout(state.breathsTimeout);
+  state.cprCycles++;
+  state.totalCycles++;
+
+  if (state.cprCycles >= 4) {
+    // Last cycle done — go to re-analysis. Skip 'breaths_done', say 'reanalyze' directly
+    state.cprCycles = 0;
+    transitionTo('REANALYZE');
+  } else {
+    SpeechEngine.say('breaths_done');
+    transitionTo('CPR_ACTIVE');
+  }
+}
+
+function updateCprDisplay() {
+  document.getElementById('cpr-num').textContent = state.cprPresses;
+  document.getElementById('cpr-progress-fill').style.width =
+    Math.min(state.cprPresses / 30 * 100, 100) + '%';
+  document.getElementById('cpr-round-val').textContent =
+    (state.cprCycles + 1) + '/4';
+}
+
+function updateCprTimer() {
+  if (!state.cprStart) return;
+  const s = Math.floor((Date.now() - state.cprStart) / 1000);
+  const mm = String(Math.floor(s / 60)).padStart(2, '0');
+  const ss = String(s % 60).padStart(2, '0');
+  document.getElementById('cpr-elapsed').textContent = mm + ':' + ss;
+}
+
+function selectScenario(id) {
+  state.selectedScenario = id;
+  updateScenarioDetail(id);
+}
+
+function resetScenario() {
+  if (state.phase !== 'IDLE') transitionTo('IDLE');
+  state.selectedScenario = document.getElementById('scenario-selector').value;
+  updateScenarioDetail(state.selectedScenario);
+  const btn = document.getElementById('btn-reset-scenario');
+  btn.style.transform = 'rotate(360deg)';
+  btn.style.transition = 'transform 0.4s';
+  setTimeout(() => { btn.style.transform = ''; btn.style.transition = ''; }, 400);
+}
+
+function applyScenario() {
+  const id = state.selectedScenario ?? 'random';
+  if (id === 'random') {
+    state.scenario = generateScenario();
+  } else {
+    const sc = ScenarioLoader.get(id);
+    state.scenario = sc ? { ...sc } : { ...SCENARIOS_FALLBACK[id] };
+  }
+  // Auto-switch pad mode based on scenario
+  setPadMode(state.scenario.pediatric ? 'child' : 'adult');
+  // Auto-switch to simulation tab when starting
+  showTab('simulation');
+}
+
+function addLog(key, type, params) {
+  let text = t('log', key);
+  if (typeof text !== 'string') text = key;
+  if (params) {
+    if (params.n !== undefined) text = text.replace('%n', params.n);
+    if (params.j !== undefined) text = text.replace('%j', params.j);
+  }
+  const now = new Date();
+  const ts = String(now.getHours()).padStart(2, '0') + ':' +
+             String(now.getMinutes()).padStart(2, '0') + ':' +
+             String(now.getSeconds()).padStart(2, '0');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry ' + (type || 'info');
+  entry.textContent = ts + ' ' + text;
+  const container = document.getElementById('log-entries');
+  container.appendChild(entry);
+  container.scrollTop = container.scrollHeight;
+}
+
+function calcAvgRate(times) {
+  if (times.length < 2) return 0;
+  const intervals = [];
+  for (let i = 1; i < times.length; i++) intervals.push(times[i] - times[i - 1]);
+  const avgMs = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+  return Math.round(60000 / avgMs);
+}
+
+function showResults() {
+  renderUI();
+  const totalSec = state.sessionStart ? Math.floor((Date.now() - state.sessionStart) / 1000) : 0;
+  const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+  const ss = String(totalSec % 60).padStart(2, '0');
+  document.getElementById('val-time').textContent = mm + ':' + ss;
+  document.getElementById('val-shocks').textContent = state.shockCount;
+  document.getElementById('val-cpr').textContent = state.totalCycles;
+  document.getElementById('val-rate').textContent = calcAvgRate(state.compressionTimes) + ' /min';
+  // Longest pause (simplified)
+  let longest = 0;
+  for (let i = 1; i < state.compressionTimes.length; i++) {
+    const gap = state.compressionTimes[i] - state.compressionTimes[i - 1];
+    if (gap > longest) longest = gap;
+  }
+  document.getElementById('val-pause').textContent = longest > 0 ? (longest / 1000).toFixed(1) + ' s' : '-';
+  document.getElementById('result-modal').hidden = false;
+  // Voice already played in END_SESSION — no duplicate call
+}
+
+function resetSession() {
+  document.getElementById('result-modal').hidden = true;
+  transitionTo('IDLE');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  K. Skin
+// ═══════════════════════════════════════════════════════════
+const SKINS = {
+  frx:       { cls: 'skin-frx',       label: 'Podobn\u00e9 FRx' },
+  zoll:      { cls: 'skin-zoll',      label: 'Podobn\u00e9 ZOLL' },
+  heartsine: { cls: 'skin-heartsine', label: 'Podobn\u00e9 SAM' },
+};
+
+function setSkin(id) {
+  if (!SKINS[id]) return;
+  document.body.className = document.body.className
+    .replace(/skin-\w+/g, '').trim() + ' ' + SKINS[id].cls;
+  state.activeSkin = id;
+  document.querySelectorAll('.skin-btn')
+    .forEach(b => b.classList.toggle('active', b.dataset.skin === id));
+  EcgEngine.resize();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Donate modal
+// ═══════════════════════════════════════════════════════════
+function openDonateModal() {
+  renderUI();
+  document.getElementById('donate-modal').hidden = false;
+  document.getElementById('donate-close').focus();
+}
+function closeDonateModal() {
+  document.getElementById('donate-modal').hidden = true;
+  document.getElementById('btn-donate').focus();
+}
+document.getElementById('donate-modal').addEventListener('click', e => {
+  if (e.target.id === 'donate-modal') closeDonateModal();
+});
+
+// ═══════════════════════════════════════════════════════════
+//  L. DOMContentLoaded
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // 0. Load scenarios from JSON (async, non-blocking)
+  ScenarioLoader.load();
+  VoiceTiming.load();
+
+  // 1. Default skin
+  setSkin('frx');
+
+  // 2. Render UI texts
+  renderUI();
+
+  // 3. Active language
+  document.getElementById('lang-cs').classList.add('active');
+
+  // 4. Init and start EKG
+  EcgEngine.init();
+  EcgEngine.start();
+
+  // 5. Init TTS
+  SpeechEngine.init();
+
+  // 6. AudioContext + voice detection after user gesture
+  document.addEventListener('click', () => {
+    if (!AudioEngine.ctx) {
+      AudioEngine.init();
+      MetronomeEngine.ctx = AudioEngine.ctx;
+      SpeechEngine.unlockAndDetect();
+    }
+  }, { once: true });
+
+  // 7. Keyboard shortcuts
+  document.addEventListener('keydown', handleKeydown);
+});
+
+function handleKeydown(e) {
+  // Escape closes modals
+  if (e.key === 'Escape') {
+    if (!document.getElementById('donate-modal').hidden) { closeDonateModal(); return; }
+    if (!document.getElementById('result-modal').hidden) { resetSession(); return; }
+  }
+
+  // Space = compress (only in CPR_ACTIVE)
+  if (e.code === 'Space' && state.phase === 'CPR_ACTIVE') {
+    e.preventDefault();
+    doCompress();
+    return;
+  }
+
+  // Enter = confirm current action
+  if (e.key === 'Enter') {
+    if (state.phase === 'CPR_BREATHS') { doBreaths(); return; }
+    if (state.phase === 'SHOCK_READY') { pressShock(); return; }
+  }
+
+  // R = reset
+  if (e.key === 'r' || e.key === 'R') {
+    if (!e.ctrlKey && !e.metaKey) {
+      resetScenario();
+    }
+  }
+}
+
+// Handle window resize for canvas
+window.addEventListener('resize', () => EcgEngine.resize());
+  </script>
+</body>
+</html>

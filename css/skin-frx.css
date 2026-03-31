@@ -1,0 +1,13 @@
+/* ══════════════════════════════════════════
+   SKIN: Model A — Podobné FRx
+   Světle šedý ABS plast, zelené + oranžové
+   ══════════════════════════════════════════ */
+body.skin-frx .frx-logo-brand::after { content: 'Podobn\00e9  FRx'; color: #1d4ed8; font-size: 18px; font-weight: 900; letter-spacing: 4px; }
+body.skin-frx .frx-logo-model::after { content: 'AED Trainer \00B7  Model A'; color: #374151; font-size: 11px; letter-spacing: 1.5px; }
+body.skin-frx .frx-serial::after { content: 'Typ A \00B7  AED \00B7  TREN\00c1\017d\00c9R'; color: #4b5563; font-size: 10px; }
+body.skin-frx .conn-brand-label::after { content: 'Elektrody'; color: #4b5563; font-size: 10px; letter-spacing: 1px; }
+body.skin-frx #ecg-canvas { display: block; }
+body.skin-frx #skin-alt-display { display: none; }
+/* LED labels on light body — darker for contrast */
+body.skin-frx .led-item span { color: #1f2937; font-size: 11px; }
+body.skin-frx .ready-label { color: #1f2937; font-size: 11px; }

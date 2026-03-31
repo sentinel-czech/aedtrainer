@@ -1,0 +1,82 @@
+/* ══════════════════════════════════════════
+   SKIN: Model B — Podobné ZOLL
+   Téměř černý plast, obdélníkové VÝBOJ, CPR čítač
+   ══════════════════════════════════════════ */
+body.skin-zoll #frx-body {
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.08) 0%, transparent 50%),
+    linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.25) 100%),
+    linear-gradient(160deg, #2a2a2a 0%, #1e1e1e 40%, #161616 70%, #0f0f0f 100%);
+  border-top: 2px solid #3a3a3a; border-left: 2px solid #323232;
+  border-right: 2px solid #080808; border-bottom: 3px solid #050505;
+  box-shadow: 0 14px 45px rgba(0,0,0,0.98), 0 5px 14px rgba(0,0,0,0.85),
+    inset 0 2px 0 rgba(255,255,255,0.06), inset 0 -2px 0 rgba(0,0,0,0.50);
+}
+body.skin-zoll .frx-logo-brand::after { content: 'Podobn\00e9  ZOLL'; color: #fff; font-size: 20px; font-weight: 900; letter-spacing: 5px; }
+body.skin-zoll .frx-logo-model::after { content: 'AED Trainer \00B7  Model B'; color: #aaa; font-size: 10px; letter-spacing: 2px; }
+body.skin-zoll .frx-serial::after { content: 'Typ B \00B7  AED \00B7  TREN\00c1\017d\00c9R'; color: #333; }
+body.skin-zoll .conn-brand-label::after { content: 'CPR Elektrody'; color: #555; font-size: 8px; letter-spacing: 1px; }
+body.skin-zoll #ecg-canvas { display: none; }
+body.skin-zoll #skin-alt-display {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #000; border: 1px solid #1a1a1a; height: 100%; gap: 2px;
+}
+body.skin-zoll #zoll-cpr-num { color: #22c55e; font-size: 28px; font-weight: 900; font-family: monospace; display: block; line-height: 1; }
+body.skin-zoll .alt-label::after { content: 'COMPRS'; color: #333; font-size: 8px; letter-spacing: 2px; font-family: var(--font-device); }
+body.skin-zoll #btn-on {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.20) 0%, transparent 55%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.40) 0%, transparent 50%),
+    radial-gradient(circle at 40% 35%, #16a34a 0%, #15803d 50%, #0d6630 100%);
+  border-top: 3px solid #22c55e; border-bottom: 3px solid #064e20;
+  border-left: 3px solid #155a2a; border-right: 3px solid #155a2a;
+}
+body.skin-zoll #btn-on .btn-symbol { color: #86efac; font-size: 26px; }
+body.skin-zoll #btn-on .btn-label { color: #86efac; }
+body.skin-zoll #btn-on.powered {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.22) 0%, transparent 52%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.28) 0%, transparent 48%),
+    radial-gradient(circle at 40% 35%, #22c55e 0%, #16a34a 50%, #0d6630 100%);
+  box-shadow: 0 0 24px rgba(34,197,94,0.8), 0 8px 18px rgba(0,0,0,0.70),
+    inset 0 2px 3px rgba(255,255,255,0.20), inset 0 -4px 6px rgba(0,0,0,0.50);
+}
+body.skin-zoll #btn-shock {
+  border-radius: 12px; width: 110px; height: 68px;
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.08) 0%, transparent 55%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.40) 0%, transparent 50%),
+    linear-gradient(160deg, #7c2d12 0%, #5a1e0a 60%, #3a1205 100%);
+  border-top: 2px solid #8b3515; border-bottom: 3px solid #2a0d04;
+  border-left: 2px solid #5a1e0a; border-right: 2px solid #5a1e0a;
+}
+body.skin-zoll #btn-shock.shock-ready {
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.22) 0%, transparent 52%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,0.30) 0%, transparent 48%),
+    linear-gradient(160deg, #f97316 0%, #ea580c 60%, #c2410c 100%);
+  border-top: 2px solid #fdba74; border-bottom: 3px solid #7c2d12;
+  box-shadow: 0 0 28px rgba(249,115,22,0.75), 0 6px 14px rgba(0,0,0,0.70),
+    inset 0 2px 3px rgba(255,255,255,0.25), inset 0 -3px 5px rgba(0,0,0,0.40);
+}
+body.skin-zoll #connectors { background: #0a0a0a; border: 1px solid #2a2a2a; }
+body.skin-zoll .connector { border: 1.5px dashed #333; }
+body.skin-zoll .connector.placed { border-style: solid; border-color: #22c55e; }
+body.skin-zoll .conn-port { background: #111; border: 1.5px solid #333; }
+body.skin-zoll .conn-pin { background: #444; }
+body.skin-zoll .connector.placed .conn-port { background: #052e16; border-color: #22c55e; }
+body.skin-zoll .connector.placed .conn-pin { background: #4ade80; }
+body.skin-zoll .pad-connector-label { color: #888; }
+body.skin-zoll .conn-hint { color: #444; }
+body.skin-zoll .torso-head, body.skin-zoll .torso-body { fill: none; stroke: #444; stroke-width: 1.5; }
+body.skin-zoll .pad-zone { fill: #1a1a1a; stroke: #444; stroke-width: 1.5; stroke-dasharray: 5 3; }
+body.skin-zoll .pad-zone:hover { stroke: #eab308; stroke-width: 2; }
+body.skin-zoll .pad-zone.placed { fill: #052e16; stroke: #22c55e; stroke-dasharray: none; }
+body.skin-zoll .pad-num { fill: #555; }
+body.skin-zoll .led-item span { color: #666; }
+body.skin-zoll .led.green { box-shadow: 0 0 14px #22c55e; }
+body.skin-zoll .ready-label { color: #666; }
+
+@media (min-width: 1100px) {
+  body.skin-zoll #btn-shock { width: 130px; height: 78px; }
+}
+@media (min-width: 1400px) {
+  body.skin-zoll #btn-shock { width: 140px; height: 84px; }
+}
+

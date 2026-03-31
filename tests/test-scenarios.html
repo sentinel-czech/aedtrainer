@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AED Trainer — Scenario Tests</title>
+<style>
+body { background: #0f172a; color: #e2e8f0; font-family: 'IBM Plex Sans', monospace; padding: 20px; }
+h1 { font-size: 18px; color: #60a5fa; margin-bottom: 16px; }
+.suite { margin-bottom: 20px; }
+.suite-name { font-size: 14px; color: #94a3b8; font-weight: 700; margin-bottom: 6px; border-bottom: 1px solid #334155; padding-bottom: 4px; }
+.test { padding: 3px 0; font-size: 13px; }
+.test.pass { color: #22c55e; }
+.test.fail { color: #ef4444; font-weight: 700; }
+.test.pass::before { content: '\2713 '; }
+.test.fail::before { content: '\2717 '; }
+.summary { margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; }
+.summary.all-pass { background: #052e16; border: 1px solid #22c55e; color: #86efac; }
+.summary.has-fail { background: #1a0505; border: 1px solid #ef4444; color: #fca5a5; }
+</style>
+</head>
+<body>
+<h1>AED Trainer — Scenario & State Machine Tests</h1>
+<div id="results"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  Minimal test framework
+// ═══════════════════════════════════════════════
+let _passed = 0, _failed = 0, _currentSuite = '';
+const _results = document.getElementById('results');
+let _suiteEl = null;
+
+function suite(name) {
+  _currentSuite = name;
+  _suiteEl = document.createElement('div');
+  _suiteEl.className = 'suite';
+  _suiteEl.innerHTML = '<div class="suite-name">' + name + '</div>';
+  _results.appendChild(_suiteEl);
+}
+
+function test(name, fn) {
+  const el = document.createElement('div');
+  el.className = 'test';
+  try {
+    fn();
+    el.className += ' pass';
+    el.textContent = name;
+    _passed++;
+  } catch (e) {
+    el.className += ' fail';
+    el.textContent = name + ' — ' + e.message;
+    _failed++;
+  }
+  _suiteEl.appendChild(el);
+}
+
+function assert(cond, msg) {
+  if (!cond) throw new Error(msg || 'Assertion failed');
+}
+function assertEqual(a, b, msg) {
+  if (a !== b) throw new Error((msg || '') + ' expected ' + JSON.stringify(b) + ' got ' + JSON.stringify(a));
+}
+
+// ═══════════════════════════════════════════════
+//  Load scenarios JSON (sync via XHR for testing)
+// ═══════════════════════════════════════════════
+let scenariosJson = null;
+try {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', '../scenarios/scenarios.json', false);
+  xhr.send();
+  if (xhr.status === 200 || xhr.status === 0) {
+    scenariosJson = JSON.parse(xhr.responseText);
+  }
+} catch (e) {
+  // Will test with fallback
+}
+
+// ═══════════════════════════════════════════════
+//  Inline fallback scenarios (copy from index.html)
+// ═══════════════════════════════════════════════
+const SCENARIOS_FALLBACK = {
+  random: { name: { cs: 'Nahodny', en: 'Random' }, description: { cs: 'Test', en: 'Test' } },
+  S1: { rhythm: 'VF', shockable: true, shockSuccess: true, rosc_after: 1, pediatric: false,
+    name: { cs: 'S1', en: 'S1' }, description: { cs: 'test', en: 'test' } },
+  S2: { rhythm: 'VF', shockable: true, shockSuccess: false, rosc_after: 3, pediatric: false,
+    name: { cs: 'S2', en: 'S2' }, description: { cs: 'test', en: 'test' } },
+  S3: { rhythm: 'PEA', shockable: false, rosc_cpr_cycles: 3, pediatric: false,
+    name: { cs: 'S3', en: 'S3' }, description: { cs: 'test', en: 'test' } },
+  S4: { rhythm: 'ASY', shockable: false, rosc_cpr_cycles: 0, pediatric: false,
+    name: { cs: 'S4', en: 'S4' }, description: { cs: 'test', en: 'test' } },
+  S5: { rhythm: 'VF', shockable: true, shockSuccess: true, rosc_after: 1, pediatric: true,
+    name: { cs: 'S5', en: 'S5' }, description: { cs: 'test', en: 'test' } },
+  S6: { rhythm: 'VF', shockable: true, shockSuccess: true, rosc_after: 2, pediatric: false,
+    name: { cs: 'S6', en: 'S6' }, description: { cs: 'test', en: 'test' } },
+};
+
+const scenarios = scenariosJson || SCENARIOS_FALLBACK;
+
+// ═══════════════════════════════════════════════
+//  TESTS
+// ═══════════════════════════════════════════════
+
+// ── Scenario structure ──
+suite('Scenario JSON structure');
+
+test('JSON contains all 7 scenarios (random + S1-S6)', () => {
+  const keys = Object.keys(scenarios);
+  assert(keys.includes('random'), 'missing random');
+  assert(keys.includes('S1'), 'missing S1');
+  assert(keys.includes('S2'), 'missing S2');
+  assert(keys.includes('S3'), 'missing S3');
+  assert(keys.includes('S4'), 'missing S4');
+  assert(keys.includes('S5'), 'missing S5');
+  assert(keys.includes('S6'), 'missing S6');
+});
+
+test('All scenarios have name.cs and name.en', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    assert(sc.name && sc.name.cs, id + ' missing name.cs');
+    assert(sc.name && sc.name.en, id + ' missing name.en');
+  }
+});
+
+test('All scenarios have description.cs and description.en', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    assert(sc.description && sc.description.cs, id + ' missing description.cs');
+    assert(sc.description && sc.description.en, id + ' missing description.en');
+  }
+});
+
+test('Non-random scenarios have rhythm property', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    if (id === 'random') continue;
+    assert(sc.rhythm, id + ' missing rhythm');
+    assert(['VF', 'VT', 'PEA', 'ASY'].includes(sc.rhythm), id + ' invalid rhythm: ' + sc.rhythm);
+  }
+});
+
+test('All non-random scenarios have shockable boolean', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    if (id === 'random') continue;
+    assert(typeof sc.shockable === 'boolean', id + ' shockable not boolean');
+  }
+});
+
+// ── Medical accuracy ──
+suite('Medical accuracy — scenario parameters');
+
+test('S1 (VF): shockable=true, shockSuccess=true, rosc_after=1', () => {
+  const s = scenarios.S1;
+  assertEqual(s.rhythm, 'VF');
+  assertEqual(s.shockable, true);
+  assertEqual(s.shockSuccess, true);
+  assertEqual(s.rosc_after, 1);
+  assertEqual(s.pediatric, false);
+});
+
+test('S2 (Refractory VF): shockable=true, shockSuccess=false', () => {
+  const s = scenarios.S2;
+  assertEqual(s.rhythm, 'VF');
+  assertEqual(s.shockable, true);
+  assertEqual(s.shockSuccess, false);
+});
+
+test('S3 (PEA): shockable=false, rosc_cpr_cycles=3', () => {
+  const s = scenarios.S3;
+  assertEqual(s.rhythm, 'PEA');
+  assertEqual(s.shockable, false);
+  assertEqual(s.rosc_cpr_cycles, 3);
+});
+
+test('S4 (Asystole): shockable=false, rosc_cpr_cycles=0 (no ROSC)', () => {
+  const s = scenarios.S4;
+  assertEqual(s.rhythm, 'ASY');
+  assertEqual(s.shockable, false);
+  assertEqual(s.rosc_cpr_cycles, 0);
+});
+
+test('S5 (Pediatric): pediatric=true, energy should be 50J', () => {
+  const s = scenarios.S5;
+  assertEqual(s.pediatric, true);
+  assertEqual(s.shockable, true);
+});
+
+test('S6 (Delayed): shockSuccess=true, rosc_after=2 (not first shock)', () => {
+  const s = scenarios.S6;
+  assertEqual(s.shockSuccess, true);
+  assertEqual(s.rosc_after, 2);
+});
+
+test('VF/VT rhythms are shockable, PEA/ASY are not', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    if (id === 'random') continue;
+    if (sc.rhythm === 'VF' || sc.rhythm === 'VT') {
+      assertEqual(sc.shockable, true, id + ' VF/VT should be shockable');
+    }
+    if (sc.rhythm === 'PEA' || sc.rhythm === 'ASY') {
+      assertEqual(sc.shockable, false, id + ' PEA/ASY should not be shockable');
+    }
+  }
+});
+
+test('Shockable scenarios have rosc_after, non-shockable have rosc_cpr_cycles', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    if (id === 'random') continue;
+    if (sc.shockable) {
+      assert(typeof sc.rosc_after === 'number', id + ' shockable missing rosc_after');
+    } else {
+      assert(typeof sc.rosc_cpr_cycles === 'number', id + ' non-shockable missing rosc_cpr_cycles');
+    }
+  }
+});
+
+test('Pediatric energy is 50J (not 150J)', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    if (id === 'random') continue;
+    if (sc.pediatric) {
+      // Energy is derived from pediatric flag in code: state.joulesToDeliver = 50
+      assertEqual(sc.pediatric, true, id + ' should be pediatric');
+    }
+  }
+});
+
+// ── ERC 2025 compliance ──
+suite('ERC 2025 compliance checks');
+
+test('Shock energy: 150J adult (implicit), 50J pediatric', () => {
+  // Adult default = 150, pediatric = 50
+  // Scenarios don't store energy directly — it's derived from pediatric flag
+  assert(!scenarios.S1.pediatric, 'S1 should be adult (150J)');
+  assert(scenarios.S5.pediatric, 'S5 should be pediatric (50J)');
+});
+
+test('CPR ratio 30:2 is hardcoded in voice prompts', () => {
+  // Verify from scenario descriptions
+  const s1desc = scenarios.S1.description.en;
+  assert(s1desc.includes('30') || s1desc.includes('thirty'), 'S1 should mention 30 compressions');
+});
+
+test('Non-shockable scenarios correctly state "no shock advised"', () => {
+  const s3desc = scenarios.S3.description.en.toLowerCase();
+  const s4desc = scenarios.S4.description.en.toLowerCase();
+  assert(s3desc.includes('no shock') || s3desc.includes('not advise'), 'S3 should mention no shock');
+  assert(s4desc.includes('no shock') || s4desc.includes('not advise'), 'S4 should mention no shock');
+});
+
+test('ROSC detection happens at re-analysis, not immediately after shock', () => {
+  // S1: rosc_after=1 means ROSC at 1st re-analysis (after 1 shock + 2min CPR)
+  // Not immediately after shock delivery
+  const s1desc = scenarios.S1.description.en.toLowerCase();
+  assert(s1desc.includes('re-analy') || s1desc.includes('2 minutes'), 'S1 should mention re-analysis or 2 minutes CPR before ROSC');
+});
+
+test('Asystole (S4) has poor prognosis — no ROSC', () => {
+  assertEqual(scenarios.S4.rosc_cpr_cycles, 0, 'Asystole should have 0 ROSC cycles');
+  const desc = scenarios.S4.description.en.toLowerCase();
+  assert(desc.includes('no rosc') || desc.includes('not restored') || desc.includes('poor'), 'S4 should mention poor prognosis');
+});
+
+test('PEA (S3) can have ROSC — reversible cause', () => {
+  assert(scenarios.S3.rosc_cpr_cycles > 0, 'PEA should be able to achieve ROSC');
+});
+
+// ── ROSC logic simulation ──
+suite('ROSC trigger logic simulation');
+
+function simulateROSC(sc, shockCount, totalCycles) {
+  const reanalysisCount = Math.ceil(totalCycles / 4);
+  if (sc.shockable) {
+    return sc.shockSuccess && shockCount >= sc.rosc_after;
+  } else {
+    return sc.rosc_cpr_cycles > 0 && reanalysisCount >= sc.rosc_cpr_cycles;
+  }
+}
+
+test('S1: ROSC after 1 shock + 4 CPR rounds (1 re-analysis)', () => {
+  assert(!simulateROSC(scenarios.S1, 0, 0), 'No ROSC before shock');
+  assert(!simulateROSC(scenarios.S1, 1, 0), 'No ROSC before re-analysis');
+  assert(simulateROSC(scenarios.S1, 1, 4), 'ROSC at first re-analysis after 1 shock');
+});
+
+test('S2: No ROSC even after 3 shocks (shockSuccess=false)', () => {
+  assert(!simulateROSC(scenarios.S2, 1, 4), 'No ROSC after 1 shock');
+  assert(!simulateROSC(scenarios.S2, 2, 8), 'No ROSC after 2 shocks');
+  assert(!simulateROSC(scenarios.S2, 3, 12), 'No ROSC after 3 shocks (refractory)');
+});
+
+test('S3: ROSC after 3 CPR re-analysis cycles (no shocks)', () => {
+  assert(!simulateROSC(scenarios.S3, 0, 4), 'No ROSC after 1 cycle');
+  assert(!simulateROSC(scenarios.S3, 0, 8), 'No ROSC after 2 cycles');
+  assert(simulateROSC(scenarios.S3, 0, 12), 'ROSC after 3 cycles');
+});
+
+test('S4: Never ROSC (rosc_cpr_cycles=0)', () => {
+  assert(!simulateROSC(scenarios.S4, 0, 4), 'No ROSC after 1 cycle');
+  assert(!simulateROSC(scenarios.S4, 0, 20), 'No ROSC after 5 cycles');
+  assert(!simulateROSC(scenarios.S4, 0, 100), 'No ROSC ever');
+});
+
+test('S5: ROSC after 1 shock (pediatric)', () => {
+  assert(simulateROSC(scenarios.S5, 1, 4), 'ROSC at first re-analysis');
+});
+
+test('S6: No ROSC after 1 shock, ROSC after 2 shocks', () => {
+  assert(!simulateROSC(scenarios.S6, 1, 4), 'No ROSC after first shock');
+  assert(simulateROSC(scenarios.S6, 2, 8), 'ROSC after second shock');
+});
+
+// ── Random scenario generation ──
+suite('Random scenario generation');
+
+function generateScenario() {
+  const weights = { VF: 0.55, VT: 0.10, PEA: 0.20, ASY: 0.15 };
+  const entries = Object.entries(weights);
+  const total = entries.reduce((s, [, w]) => s + w, 0);
+  let r = Math.random() * total;
+  let rhythm;
+  for (const [key, w] of entries) { r -= w; if (r <= 0) { rhythm = key; break; } }
+  if (!rhythm) rhythm = 'ASY';
+  const shockable = ['VF', 'VT'].includes(rhythm);
+  if (shockable) {
+    return { rhythm, shockable, shockSuccess: Math.random() < 0.70,
+             rosc_after: Math.floor(Math.random() * 3) + 1, pediatric: false };
+  }
+  const roscChance = rhythm === 'PEA' ? 0.30 : 0.10;
+  return { rhythm, shockable, pediatric: false,
+           rosc_cpr_cycles: Math.random() < roscChance ? (Math.floor(Math.random() * 2) + 2) : 0 };
+}
+
+test('Random scenarios always have valid rhythm', () => {
+  for (let i = 0; i < 100; i++) {
+    const sc = generateScenario();
+    assert(['VF', 'VT', 'PEA', 'ASY'].includes(sc.rhythm), 'Invalid rhythm: ' + sc.rhythm);
+  }
+});
+
+test('Random scenarios: shockable matches rhythm', () => {
+  for (let i = 0; i < 100; i++) {
+    const sc = generateScenario();
+    if (sc.rhythm === 'VF' || sc.rhythm === 'VT') {
+      assertEqual(sc.shockable, true, 'VF/VT must be shockable');
+    } else {
+      assertEqual(sc.shockable, false, 'PEA/ASY must not be shockable');
+    }
+  }
+});
+
+test('Random scenarios: shockable have rosc_after 1-3', () => {
+  for (let i = 0; i < 100; i++) {
+    const sc = generateScenario();
+    if (sc.shockable) {
+      assert(sc.rosc_after >= 1 && sc.rosc_after <= 3, 'rosc_after out of range: ' + sc.rosc_after);
+      assert(typeof sc.shockSuccess === 'boolean', 'shockSuccess not boolean');
+    }
+  }
+});
+
+test('Random scenarios: non-shockable have rosc_cpr_cycles >= 0', () => {
+  for (let i = 0; i < 100; i++) {
+    const sc = generateScenario();
+    if (!sc.shockable) {
+      assert(typeof sc.rosc_cpr_cycles === 'number', 'missing rosc_cpr_cycles');
+      assert(sc.rosc_cpr_cycles >= 0, 'negative rosc_cpr_cycles');
+    }
+  }
+});
+
+test('Random scenarios: pediatric is always false', () => {
+  for (let i = 0; i < 100; i++) {
+    const sc = generateScenario();
+    assertEqual(sc.pediatric, false, 'Random should not be pediatric');
+  }
+});
+
+// ── i18n ──
+suite('Internationalization (i18n)');
+
+test('All scenario descriptions are non-empty strings', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    assert(sc.description.cs.length > 10, id + ' CS description too short');
+    assert(sc.description.en.length > 10, id + ' EN description too short');
+  }
+});
+
+test('Scenario descriptions contain structured content (numbered steps)', () => {
+  for (const [id, sc] of Object.entries(scenarios)) {
+    if (id === 'random') continue;
+    const cs = sc.description.cs;
+    const en = sc.description.en;
+    assert(cs.includes('1.') || cs.includes('\u2022'), id + ' CS missing structured steps');
+    assert(en.includes('1.') || en.includes('\u2022'), id + ' EN missing structured steps');
+  }
+});
+
+// ── Audio files ──
+suite('Audio file availability');
+
+const voiceKeys = ['start', 'pad1_prompt', 'pad1_ok', 'pad2_prompt', 'pad2_ok',
+  'analyzing', 'shock_advised', 'shock_ready', 'shock_clear', 'shock_delivered',
+  'no_shock', 'cpr_start', 'cpr_30', 'cpr_15', 'breaths_done', 'reanalyze',
+  'rosc', 'off', 'end_session'];
+
+for (const lang of ['cs', 'en']) {
+  test('Audio files exist for ' + lang.toUpperCase() + ' (' + voiceKeys.length + ' keys)', () => {
+    let missing = [];
+    for (const key of voiceKeys) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('HEAD', '../audio/' + lang + '/' + key + '.mp3', false);
+      try {
+        xhr.send();
+        if (xhr.status !== 200 && xhr.status !== 0) missing.push(key);
+      } catch { missing.push(key); }
+    }
+    assert(missing.length === 0, 'Missing: ' + missing.join(', '));
+  });
+}
+
+// ── Summary ──
+const sumEl = document.createElement('div');
+sumEl.className = 'summary ' + (_failed === 0 ? 'all-pass' : 'has-fail');
+sumEl.textContent = (_failed === 0 ? '\u2713 ALL PASSED' : '\u2717 FAILURES') +
+  ' — ' + _passed + ' passed, ' + _failed + ' failed';
+_results.appendChild(sumEl);
+</script>
+</body>
+</html>

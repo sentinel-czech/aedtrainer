@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AED Trainer — Zdroje / Resources</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700;900&family=IBM+Plex+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --bg-dark: #0d1117;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --accent: #3b82f6;
+  --green: #22c55e;
+  --orange: #f97316;
+  --red: #ef4444;
+  --border: #334155;
+  --font-ui: 'IBM Plex Sans', sans-serif;
+  --font-device: 'Rajdhani', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-dark);
+  color: var(--text);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+header {
+  background: #111827;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+}
+header h1 {
+  font-family: var(--font-device);
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+header .lang-switch { display: flex; gap: 4px; }
+header .lang-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--muted);
+  font-size: 11px; font-weight: 700;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+header .lang-btn:hover { color: var(--text); border-color: var(--muted); }
+header .lang-btn.active { color: var(--text); border-color: var(--text); }
+header a.back-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+header a.back-link:hover { background: var(--accent); color: #fff; }
+
+/* Content */
+main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+section h2 {
+  font-family: var(--font-device);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+section h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  margin: 12px 0 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 13px;
+}
+th {
+  text-align: left;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #1e293b;
+  vertical-align: top;
+}
+td a {
+  color: var(--accent);
+  text-decoration: none;
+  word-break: break-all;
+}
+td a:hover { text-decoration: underline; }
+
+ul { list-style: none; padding: 0; }
+ul li {
+  padding: 4px 0;
+  font-size: 13px;
+  position: relative;
+  padding-left: 16px;
+}
+ul li::before {
+  content: '\25B8';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.chain-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.chain-num {
+  background: var(--accent);
+  color: #fff;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.param-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 8px 0;
+}
+.param-item {
+  background: var(--bg-dark);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.param-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.param-value { color: var(--text); font-size: 14px; font-weight: 700; font-family: monospace; }
+
+.legal-note {
+  background: var(--bg-dark);
+  border-left: 3px solid var(--green);
+  padding: 10px 14px;
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.about-box {
+  text-align: center;
+  padding: 20px;
+}
+.about-box .logo {
+  font-family: var(--font-device);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.about-box p { color: var(--muted); font-size: 13px; max-width: 500px; margin: 0 auto 6px; }
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 20px;
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+/* Language toggle */
+[data-lang="en"] { display: none; }
+body.lang-en [data-lang="cs"] { display: none; }
+body.lang-en [data-lang="en"] { display: initial; }
+body.lang-en table[data-lang="cs"],
+body.lang-en section[data-lang="cs"],
+body.lang-en div[data-lang="cs"],
+body.lang-en ul[data-lang="cs"],
+body.lang-en p[data-lang="cs"] { display: none; }
+body.lang-en table[data-lang="en"],
+body.lang-en section[data-lang="en"],
+body.lang-en div[data-lang="en"],
+body.lang-en ul[data-lang="en"],
+body.lang-en p[data-lang="en"] { display: initial; }
+
+/* Bilingual elements shown in both */
+[data-lang="both"] { display: initial; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span data-lang="cs">Zdroje a reference</span>
+    <span data-lang="en">Resources &amp; References</span>
+  </h1>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="lang-switch">
+      <button class="lang-btn active" onclick="setLang('cs')">CZ</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <a href="index.html" class="back-link">
+      <span data-lang="cs">&larr; Trainer</span>
+      <span data-lang="en">&larr; Trainer</span>
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══ CHAIN OF SURVIVAL ═══ -->
+  <section>
+    <h2>
+      <span data-lang="cs">Řetězec přežití (Chain of Survival)</span>
+      <span data-lang="en">Chain of Survival</span>
+    </h2>
+    <div data-lang="cs">
+      <div class="chain-step"><span class="chain-num">1</span> Časné rozpoznání + přivolání pomoci (155 / 112)</div>
+      <div class="chain-step"><span class="chain-num">2</span> Časná KPR (30:2, tvrdě a rychle)</div>
+      <div class="chain-step"><span class="chain-num">3</span> Časná defibrilace (AED &lt; 3–5 min od kolapsu)</div>
+      <div class="chain-step"><span class="chain-num">4</span> Rozšířená resuscitace (záchranná služba)</div>
+      <div class="chain-step"><span class="chain-num">5</span> Komplexní péče po resuscitaci (nemocnice)</div>
+    </div>
+    <div data-lang="en">
+      <div class="chain-step"><span class="chain-num">1</span> Early recognition + call for help (112 / 911)</div>
+      <div class="chain-step"><span class="chain-num">2</span> Early CPR (30:2, push hard and fast)</div>
+      <div class="chain-step"><span class="chain-num">3</span> Early defibrillation (AED &lt; 3-5 min from collapse)</div>
+      <div class="chain-step"><span class="chain-num">4</span> Advanced life support (paramedics)</div>
+      <div class="chain-step"><span class="chain-num">5</span> Post-resuscitation care (hospital)</div>
+    </div>
+  </section>
+
+  <!-- ═══ CPR PARAMETERS ═══ -->
+  <section>
+    <h2>
+      <span data-lang="cs">Klíčové parametry KPR (ERC 2025)</span>
+      <span data-lang="en">Key CPR Parameters (ERC 2025)</span>
+    </h2>
+    <div class="param-grid">
+      <div class="param-item">
+        <div class="param-label"><span data-lang="cs">Frekvence kompresí</span><span data-lang="en">Compression rate</span></div>
+        <div class="param-value">100-120 /min</div>
+      </div>
+      <div class="param-item">
+        <div class="param-label"><span data-lang="cs">Hloubka kompresí</span><span data-lang="en">Compression depth</span></div>
+        <div class="param-value">5-6 cm</div>
+      </div>
+      <div class="param-item">
+        <div class="param-label"><span data-lang="cs">Poměr</span><span data-lang="en">Ratio</span></div>
+        <div class="param-value">30 : 2</div>
+      </div>
+      <div class="param-item">
+        <div class="param-label"><span data-lang="cs">Energie výboje</span><span data-lang="en">Shock energy</span></div>
+        <div class="param-value">150-200 J</div>
+      </div>
+      <div class="param-item">
+        <div class="param-label"><span data-lang="cs">Max. přerušení KPR</span><span data-lang="en">Max CPR pause</span></div>
+        <div class="param-value">&lt; 10 s</div>
+      </div>
+      <div class="param-item">
+        <div class="param-label"><span data-lang="cs">Re-analýza</span><span data-lang="en">Re-analysis</span></div>
+        <div class="param-value"><span data-lang="cs">každých 2 min</span><span data-lang="en">every 2 min</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ KEY CHANGES 2025 ═══ -->
+  <section>
+    <h2>
+      <span data-lang="cs">Klíčové změny v guidelines 2025 oproti 2021</span>
+      <span data-lang="en">Key Changes in 2025 vs 2021 Guidelines</span>
+    </h2>
+    <ul>
+      <li data-lang="cs"><strong>Volání 155/112 ihned</strong> po zjištění bezvědomí — není třeba nejprve ověřovat dýchání. Zachránce volá během posuzování stavu.</li>
+      <li data-lang="en"><strong>Call 155/112 immediately</strong> upon finding unresponsiveness — no need to confirm breathing first. Call while assessing.</li>
+      <li data-lang="cs"><strong>Číselné parametry KPR beze změny:</strong> 100–120/min, 5–6 cm, 30:2, re-analýza každých 2 min.</li>
+      <li data-lang="en"><strong>Core CPR numbers unchanged:</strong> 100-120/min, 5-6 cm, 30:2, re-analysis every 2 min.</li>
+      <li data-lang="cs"><strong>Změna vektoru elektrod</strong> po 3 neúspěšných výbojích — přesunout z antero-laterální na antero-posteriorní pozici.</li>
+      <li data-lang="en"><strong>Electrode vector change</strong> after 3 unsuccessful shocks — move from antero-lateral to antero-posterior position.</li>
+      <li data-lang="cs"><strong>Řetězec přežití rozšířen</strong> o prevenci srdeční zástavy a dlouhodobý recovery.</li>
+      <li data-lang="en"><strong>Chain of Survival expanded</strong> to include cardiac arrest prevention and long-term recovery.</li>
+      <li data-lang="cs"><strong>První pomoc</strong> jako nová samostatná kapitola guidelines.</li>
+      <li data-lang="en"><strong>First Aid</strong> as a new standalone chapter in the guidelines.</li>
+      <li data-lang="cs"><strong>AED bez zámku</strong> — doporučení proti používání uzamčených skříněk pro veřejné AED.</li>
+      <li data-lang="en"><strong>Unlocked AED cabinets</strong> — recommendation against locked storage for public AEDs.</li>
+    </ul>
+    <p style="margin-top:10px;font-size:11px;color:#64748b">
+      <span data-lang="cs">Zdroj: ERC Guidelines 2025, publikováno 22. října 2025. Implementace v kurzech od ledna 2026.</span>
+      <span data-lang="en">Source: ERC Guidelines 2025, published October 22, 2025. Course implementation from January 2026.</span>
+    </p>
+  </section>
+
+  <!-- ═══ GUIDELINES ORGANIZATIONS ═══ -->
+  <section>
+    <h2>
+      <span data-lang="cs">Resuscitační guidelines</span>
+      <span data-lang="en">Resuscitation Guidelines</span>
+    </h2>
+    <table>
+      <tr>
+        <th><span data-lang="cs">Organizace</span><span data-lang="en">Organization</span></th>
+        <th>URL</th>
+        <th><span data-lang="cs">Poznámka</span><span data-lang="en">Note</span></th>
+      </tr>
+      <tr>
+        <td><strong>European Resuscitation Council (ERC)</strong></td>
+        <td><a href="https://www.erc.edu/" target="_blank">erc.edu</a></td>
+        <td><span data-lang="cs">Evropské guidelines, základní zdroj</span><span data-lang="en">European guidelines, primary source</span></td>
+      </tr>
+      <tr>
+        <td>ERC Guidelines 2025 (EN)</td>
+        <td><a href="https://www.erc.edu/science-research/guidelines/guidelines-2025/guidelines-2025-english" target="_blank">erc.edu/guidelines-2025</a></td>
+        <td><span data-lang="cs">Kompletní guidelines 2025</span><span data-lang="en">Complete 2025 guidelines</span></td>
+      </tr>
+      <tr>
+        <td>ERC Guidelines 2025 (interactive)</td>
+        <td><a href="https://cprguidelines.eu/guidelines-2025" target="_blank">cprguidelines.eu/2025</a></td>
+        <td><span data-lang="cs">Interaktivní přehled</span><span data-lang="en">Interactive overview</span></td>
+      </tr>
+      <tr>
+        <td>ERC BLS kurz</td>
+        <td><a href="https://www.erc.edu/courses/bls" target="_blank">erc.edu/courses/bls</a></td>
+        <td><span data-lang="cs">Certifikovaný kurz BLS</span><span data-lang="en">Certified BLS course</span></td>
+      </tr>
+      <tr>
+        <td><strong>Resuscitation Council UK</strong></td>
+        <td><a href="https://www.resus.org.uk/" target="_blank">resus.org.uk</a></td>
+        <td><span data-lang="cs">Britské guidelines, výborné materiály</span><span data-lang="en">UK guidelines, excellent materials</span></td>
+      </tr>
+      <tr>
+        <td>RCUK Guidelines 2025</td>
+        <td><a href="https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines" target="_blank">resus.org.uk/2025-guidelines</a></td>
+        <td><span data-lang="cs">Plné guidelines včetně algoritmů</span><span data-lang="en">Full guidelines incl. algorithms</span></td>
+      </tr>
+      <tr>
+        <td>RCUK Adult BLS 2025</td>
+        <td><a href="https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/adult-basic-life-support-guidelines" target="_blank">resus.org.uk/adult-bls-2025</a></td>
+        <td><span data-lang="cs">BLS algoritmus pro dospělé</span><span data-lang="en">Adult BLS algorithm</span></td>
+      </tr>
+      <tr>
+        <td><strong>ILCOR</strong></td>
+        <td><a href="https://www.ilcor.org/" target="_blank">ilcor.org</a></td>
+        <td><span data-lang="cs">Mezinárodní koordinace</span><span data-lang="en">International coordination</span></td>
+      </tr>
+      <tr>
+        <td>ILCOR CoSTR</td>
+        <td><a href="https://costr.ilcor.org/" target="_blank">costr.ilcor.org</a></td>
+        <td><span data-lang="cs">Vědecký konsenzus</span><span data-lang="en">Consensus on Science</span></td>
+      </tr>
+      <tr>
+        <td><strong>American Heart Association</strong></td>
+        <td><a href="https://cpr.heart.org/" target="_blank">cpr.heart.org</a></td>
+        <td><span data-lang="cs">Americké guidelines CPR &amp; ECC</span><span data-lang="en">US CPR &amp; ECC guidelines</span></td>
+      </tr>
+      <tr>
+        <td>AHA Chain of Survival</td>
+        <td><a href="https://www.heart.org/en/health-topics/cardiac-arrest/about-cardiac-arrest/chain-of-survival" target="_blank">heart.org/chain-of-survival</a></td>
+        <td><span data-lang="cs">Řetězec přežití AHA</span><span data-lang="en">AHA Chain of Survival</span></td>
+      </tr>
+      <tr>
+        <td><strong><span data-lang="cs">Česká resuscitační rada</span><span data-lang="en">Czech Resuscitation Council</span></strong></td>
+        <td><a href="https://www.resuscitace.cz/" target="_blank">resuscitace.cz</a></td>
+        <td><span data-lang="cs">České guidelines BLS 2025</span><span data-lang="en">Czech BLS 2025 guidelines</span></td>
+      </tr>
+      <tr>
+        <td><span data-lang="cs">ČRR Doporučení</span><span data-lang="en">CRC Guidelines</span></td>
+        <td><a href="https://www.resuscitace.cz/guidelines/" target="_blank">resuscitace.cz/guidelines</a></td>
+        <td><span data-lang="cs">Doporučené postupy v češtině</span><span data-lang="en">Guidelines in Czech</span></td>
+      </tr>
+      <tr>
+        <td><span data-lang="cs">ERC 2025 algoritmy CZ</span><span data-lang="en">ERC 2025 algorithms CZ</span></td>
+        <td><a href="https://zachrannasluzba.cz/aktualita-erc-guidelines-2025-publikovany/" target="_blank">zachrannasluzba.cz</a></td>
+        <td><span data-lang="cs">Vybrané algoritmy 2025 v češtině</span><span data-lang="en">Selected 2025 algorithms in Czech</span></td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- ═══ AED IN CZECH REPUBLIC ═══ -->
+  <section>
+    <h2>
+      <span data-lang="cs">AED v České republice</span>
+      <span data-lang="en">AED in the Czech Republic</span>
+    </h2>
+    <h3><span data-lang="cs">Mapa AED</span><span data-lang="en">AED Map</span></h3>
+    <ul>
+      <li><a href="https://www.zachrankaapp.cz/aed" target="_blank"><span data-lang="cs">Aplikace Záchranka</span><span data-lang="en">Zachranka App</span></a> &mdash; <span data-lang="cs">mapa všech veřejně dostupných AED v ČR</span><span data-lang="en">map of all publicly available AEDs in Czech Republic</span></li>
+      <li><a href="https://www.zachrannykruh.cz/" target="_blank"><span data-lang="cs">Záchranný kruh</span><span data-lang="en">Zachranny kruh</span></a> &mdash; <span data-lang="cs">vzdělávací portál o první pomoci</span><span data-lang="en">first aid education portal</span></li>
+    </ul>
+
+    <h3><span data-lang="cs">Nejčastější AED přístroje v ČR</span><span data-lang="en">Most Common AEDs in Czech Republic</span></h3>
+    <table>
+      <tr><th><span data-lang="cs">Přístroj</span><span data-lang="en">Device</span></th><th><span data-lang="cs">Výrobce</span><span data-lang="en">Manufacturer</span></th><th><span data-lang="cs">Poznámka</span><span data-lang="en">Note</span></th></tr>
+      <tr><td>HeartStart FRx</td><td>Philips</td><td><span data-lang="cs"><strong>Modelový přístroj tohoto trenažéru</strong></span><span data-lang="en"><strong>Model device for this trainer</strong></span></td></tr>
+      <tr><td>HeartStart OnSite (HS1)</td><td>Philips</td><td><span data-lang="cs">Plně automatický</span><span data-lang="en">Fully automatic</span></td></tr>
+      <tr><td>LIFEPAK CR2</td><td>Stryker</td><td><span data-lang="cs">Běžný ve firmách</span><span data-lang="en">Common in companies</span></td></tr>
+      <tr><td>ZOLL AED Plus</td><td>ZOLL</td><td><span data-lang="cs">CPR zpětná vazba</span><span data-lang="en">Real-time CPR feedback</span></td></tr>
+      <tr><td>Samaritan PAD</td><td>HeartSine</td><td><span data-lang="cs">Kompaktní, lehký</span><span data-lang="en">Compact, lightweight</span></td></tr>
+    </table>
+
+    <h3><span data-lang="cs">Právní rámec</span><span data-lang="en">Legal Framework</span></h3>
+    <div class="legal-note">
+      <span data-lang="cs">
+        <strong>Zákon č. 374/2011 Sb.</strong> o zdravotnické záchranné službě: povinnost poskytnout první pomoc.<br>
+        AED není zdravotnický prostředek vyžadující odbornou způsobilost &mdash; smí ho použít kdokoliv, bez certifikace.<br>
+        <strong>Trestní zákoník &sect; 150</strong> &mdash; neposkytnutí pomoci: kdo osobě v ohrožení neposkytne pomoc, může být trestně odpovědný.
+      </span>
+      <span data-lang="en">
+        <strong>Act No. 374/2011</strong> on Emergency Medical Services: duty to provide first aid.<br>
+        AED does not require professional qualification &mdash; anyone can use it without certification.<br>
+        <strong>Criminal Code &sect; 150</strong> &mdash; failure to provide assistance: criminal liability for not helping a person in danger.
+      </span>
+    </div>
+    <p style="margin-top:8px;font-size:12px;color:#64748b">
+      <span data-lang="cs">Zdroj: </span><span data-lang="en">Source: </span>
+      <a href="https://www.zakonyprolidi.cz/cs/2011-374" target="_blank" style="color:#3b82f6">zakonyprolidi.cz</a>
+    </p>
+  </section>
+
+  <!-- ═══ FIRST AID COURSES ═══ -->
+  <section>
+    <h2>
+      <span data-lang="cs">Doporučené kurzy první pomoci</span>
+      <span data-lang="en">Recommended First Aid Courses</span>
+    </h2>
+    <table>
+      <tr><th><span data-lang="cs">Organizace</span><span data-lang="en">Organization</span></th><th>URL</th><th><span data-lang="cs">Typ</span><span data-lang="en">Type</span></th></tr>
+      <tr><td><span data-lang="cs">Český červený kříž</span><span data-lang="en">Czech Red Cross</span></td><td><a href="https://www.cervenykriz.eu" target="_blank">cervenykriz.eu</a></td><td><span data-lang="cs">Základní + rozšířené KPR</span><span data-lang="en">Basic + advanced CPR</span></td></tr>
+      <tr><td><span data-lang="cs">Záchranný kruh</span><span data-lang="en">Zachranny kruh</span></td><td><a href="https://www.zachrannykruh.cz" target="_blank">zachrannykruh.cz</a></td><td><span data-lang="cs">Online + prezenční</span><span data-lang="en">Online + in-person</span></td></tr>
+      <tr><td>IDDA (4dive.cz)</td><td><a href="https://4dive.cz" target="_blank">4dive.cz</a></td><td><span data-lang="cs">Potápění + první pomoc</span><span data-lang="en">Diving + first aid</span></td></tr>
+      <tr><td>Resuscitace.cz</td><td><a href="https://www.resuscitace.cz" target="_blank">resuscitace.cz</a></td><td><span data-lang="cs">Odborné kurzy, ERC</span><span data-lang="en">Professional courses, ERC</span></td></tr>
+      <tr><td>ERC BLS Provider</td><td><a href="https://www.erc.edu/courses/bls" target="_blank">erc.edu/courses/bls</a></td><td><span data-lang="cs">Mezinárodní certifikace</span><span data-lang="en">International certification</span></td></tr>
+      <tr><td>Resuscitation Council UK</td><td><a href="https://www.resus.org.uk/" target="_blank">resus.org.uk</a></td><td><span data-lang="cs">Online materiály a kurzy</span><span data-lang="en">Online materials &amp; courses</span></td></tr>
+    </table>
+  </section>
+
+  <!-- ═══ DEVICE DOCUMENTATION ═══ -->
+  <section>
+    <h2>
+      <span data-lang="cs">Dokumentace přístrojů</span>
+      <span data-lang="en">Device Documentation</span>
+    </h2>
+    <table>
+      <tr><th><span data-lang="cs">Přístroj</span><span data-lang="en">Device</span></th><th>URL</th></tr>
+      <tr><td>Philips HeartStart FRx</td><td><a href="https://www.usa.philips.com/healthcare/product/HC861304/heartstart-frx" target="_blank">philips.com/heartstart-frx</a></td></tr>
+      <tr><td>ZOLL AED Plus</td><td><a href="https://www.zoll.com/medical-products/aed-plus" target="_blank">zoll.com/aed-plus</a></td></tr>
+      <tr><td>HeartSine Samaritan PAD</td><td><a href="https://www.heartsine.com/" target="_blank">heartsine.com</a></td></tr>
+    </table>
+  </section>
+
+  <!-- ═══ ABOUT ═══ -->
+  <section>
+    <div class="about-box">
+      <div class="logo">AED TRAINER</div>
+      <p data-lang="cs">
+        Tento trenažér byl vytvořen jako open-source výcvikový nástroj
+        pro nácvik obsluhy automatického externího defibrilátoru.
+        Hlasové instrukce odpovídají guidelines ERC 2025.
+        Simulace není náhradou za certifikovaný kurz první pomoci.
+      </p>
+      <p data-lang="en">
+        This trainer was created as an open-source training tool
+        for practicing the use of an automated external defibrillator.
+        Voice instructions follow ERC 2025 guidelines.
+        This simulation is not a substitute for a certified first aid course.
+      </p>
+      <p style="color:var(--accent);font-size:12px;margin-top:12px">
+        <a href="https://4dive.cz" target="_blank" style="color:var(--accent)">4dive.cz</a> &middot; <a href="https://diveidda.com/cs" target="_blank" style="color:var(--accent)">diveidda.com/cs</a>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a href="https://4dive.cz">4dive.cz</a> &middot; <a href="https://diveidda.com/cs">diveidda.com/cs</a> &middot; 2026
+</footer>
+
+<script>
+function setLang(lang) {
+  document.body.classList.toggle('lang-en', lang === 'en');
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === (lang === 'cs' ? 'CZ' : 'EN'));
+  });
+}
+</script>
+</body>
+</html>
