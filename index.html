@@ -1627,11 +1627,11 @@ function transitionTo(newPhase) {
       document.getElementById('charging-bar-wrap').hidden = false;
       const fill = document.getElementById('charging-bar-fill');
       fill.style.width = '0%';
-      AudioEngine.sweep(200, 2000, chargeDur, 'sawtooth', 0.22);
 
       // Charging bar: fill duration matches shock_advised voice length
       let progress = 0;
       const chargeDur = VoiceTiming.seconds(shockKey) || 7; // seconds
+      AudioEngine.sweep(200, 2000, chargeDur, 'sawtooth', 0.22);
       const chargeStep = 100 / (chargeDur * 10); // 100% / (dur * 10 steps/s)
       const chargeInterval = setInterval(() => {
         if (state.phase !== 'SHOCK_CHARGING') { clearInterval(chargeInterval); return; }
