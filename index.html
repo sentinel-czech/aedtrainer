@@ -31,6 +31,7 @@
         <span class="skin-dot" style="background:#f06020"></span>SAM
       </button>
     </div>
+    <button id="btn-manual" onclick="openManualModal()" data-i18n="manual_btn">N&aacute;vod</button>
     <div class="site-controls">
       <span id="voice-quality" onclick="SpeechEngine.cycleMode()" role="button" tabindex="0"></span>
       <button class="lang-btn active" onclick="setLang('cs')" id="lang-cs">CZ</button>
@@ -284,6 +285,15 @@
     </div>
   </div>
 
+  <!-- 5. MANUAL MODAL -->
+  <div id="manual-modal" hidden role="dialog" aria-modal="true" aria-labelledby="manual-title">
+    <div id="manual-content">
+      <button id="manual-close" onclick="closeManualModal()">&#10005;</button>
+      <h2 id="manual-title" data-i18n="manual_title">Jak pou&#382;&#237;vat trena&#382;&#233;r</h2>
+      <div id="manual-body"></div>
+    </div>
+  </div>
+
   <footer id="site-footer">
     <a href="https://4dive.cz" target="_blank">4dive.cz</a> &middot;
     <a href="https://diveidda.com/cs" target="_blank">diveidda.com/cs</a> &middot; 2026
@@ -342,6 +352,9 @@ const LANG = {
       val_no_rosc: 'Bez ROSC',
       site_title: 'AED Trainer \u00B7 Simulator',
       resources_btn: 'Zdroje',
+      manual_btn: 'N\u00e1vod',
+      manual_title: 'Jak pou\u017e\u00edvat trena\u017e\u00e9r',
+      manual_body: '1. Vyberte typ AED (FRx / ZOLL / SAM) v horn\u00ed li\u0161t\u011b\n2. Klikn\u011bte na zelen\u00e9 tla\u010d\u00edtko ZAP/VYP pro zapnut\u00ed p\u0159\u00edstroje\n3. Klikn\u011bte postupn\u011b na elektrody (Elektroda 1, pak Elektroda 2) \u2014 simuluje p\u0159ilo\u017een\u00ed na pacienta\n4. P\u0159\u00edstroj automaticky analyzuje rytmus a ozn\u00e1m\u00ed, zda je v\u00fdboj doporu\u010den\n5. Pokud je v\u00fdboj doporu\u010den, stiskn\u011bte oran\u017eov\u00e9 tla\u010d\u00edtko V\u00ddBOJ\n6. Stla\u010den\u00ed hrudn\u00edku (KPR) simulujte kliknut\u00edm na tla\u010d\u00edtko nebo kl\u00e1vesou Mezern\u00edk\n7. Sledujte hlasov\u00e9 pokyny p\u0159\u00edstroje',
       donate_btn: 'Podpo\u0159it',
       donate_title: 'Podpo\u0159te projekt',
       donate_desc: 'Tento trena\u017e\u00e9r vznikl jako open-source n\u00e1stroj pro v\u00fdcvik prvn\u00ed pomoci. Pokud v\u00e1m pomohl nebo ho pou\u017e\u00edv\u00e1te ve v\u00fduce, zva\u017ete symbolick\u00fd p\u0159\u00edsp\u011bvek na jeho dal\u0161\u00ed rozvoj.',
@@ -445,6 +458,9 @@ const LANG = {
       val_no_rosc: 'No ROSC',
       site_title: 'AED Trainer \u00B7 Simulator',
       resources_btn: 'Resources',
+      manual_btn: 'Manual',
+      manual_title: 'How to use the trainer',
+      manual_body: '1. Select the AED type (FRx / ZOLL / SAM) in the top bar\n2. Click the green ON/OFF button to power on the device\n3. Click the electrode pads one by one (Pad 1, then Pad 2) \u2014 this simulates placing them on the patient\n4. The device automatically analyzes the rhythm and announces whether a shock is advised\n5. If a shock is advised, press the orange SHOCK button\n6. Simulate chest compressions (CPR) by clicking the button or pressing the Spacebar\n7. Follow the voice prompts from the device',
       donate_btn: 'Support',
       donate_title: 'Support the project',
       donate_desc: 'This trainer was created as an open-source tool for first aid training. If it helped you or you use it in teaching, consider a small contribution towards its further development.',
@@ -552,11 +568,39 @@ function renderUI() {
 // ═══════════════════════════════════════════════════════════
 //  C. AudioEngine
 // ═══════════════════════════════════════════════════════════
+// ── Audio init helper ──────────────────────────────────────
+// Idempotent — safe to call from every user-action.
+// First call creates AudioContext + starts MP3 detection.
+// Subsequent calls just resume suspended context (Safari tab switch).
+let _audioInitDone = false;
+let _audioInitPromise = null;
+
+function ensureAudio() {
+  if (_audioInitDone) {
+    if (AudioEngine.ctx && AudioEngine.ctx.state === 'suspended') AudioEngine.ctx.resume();
+    return;
+  }
+  if (!_audioInitPromise) {
+    AudioEngine.init();
+    MetronomeEngine.ctx = AudioEngine.ctx;
+    _audioInitPromise = SpeechEngine.unlockAndDetect().then(() => { _audioInitDone = true; });
+  }
+}
+
+function formatTime(s) {
+  return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  C. AudioEngine
+// ═══════════════════════════════════════════════════════════
 const AudioEngine = {
   ctx: null,
   init() {
     if (this.ctx) return;
     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Safari creates ctx in 'suspended' state — resume immediately after user gesture
+    if (this.ctx.state === 'suspended') this.ctx.resume();
   },
   beep(freq, duration, type, volume) {
     if (!this.ctx) return;
@@ -585,11 +629,11 @@ const AudioEngine = {
 };
 
 // ═══════════════════════════════════════════════════════════
-//  D. AudioPlayer (MP3 cache)
+//  D. AudioPlayer (MP3 cache) — uses simple new Audio()
 // ═══════════════════════════════════════════════════════════
 const AudioPlayer = {
-  cache: {},
-  current: null,
+  cache: {},     // lang:key → Audio element (preloaded)
+  current: null, // currently playing Audio element
   async preload(lang) {
     const keys = Object.keys(LANG[lang]?.voice ?? {});
     for (let i = 0; i < keys.length; i += 3) {
@@ -627,8 +671,8 @@ const AudioPlayer = {
 // ═══════════════════════════════════════════════════════════
 const SpeechEngine = {
   mode: 'detecting',    // 'mp3' | 'tts' | 'tts-nonnative' | 'silent'
-  mp3Available: false,  // are MP3 files detected?
-  ttsAvailable: false,  // is Web Speech API working?
+  mp3Available: false,
+  ttsAvailable: false,
   synth: window.speechSynthesis,
   voice: null,
   voicesLoaded: false,
@@ -646,11 +690,10 @@ const SpeechEngine = {
     this._showModeIndicator('detecting');
   },
 
-  // Called after first user click (browser audio policy)
+  // Called after first user gesture (browser audio policy)
   async unlockAndDetect() {
     this.userGestured = true;
-
-    // 1. Unlock TTS with a silent utterance (Chrome requires gesture)
+    // 1. Unlock TTS
     try {
       const u = new SpeechSynthesisUtterance('');
       u.volume = 0;
@@ -659,19 +702,15 @@ const SpeechEngine = {
       this.synth.speak(u);
       this.synth.cancel();
     } catch {}
-
-    // 2. Retry loading voices (Chrome sometimes needs this after gesture)
+    // 2. Load voices (Chrome needs gesture)
     if (!this.voicesLoaded) {
       this._loadVoices();
-      // Give Chrome a moment to populate voices
       await new Promise(r => setTimeout(r, 200));
       this._loadVoices();
     }
-
-    // 3. Detect MP3 availability
+    // 3. Detect MP3
     await this._detectMp3();
-
-    // 4. Set best available mode
+    // 4. Set mode
     if (this.mp3Available) {
       this.mode = 'mp3';
     } else if (this.ttsAvailable) {
@@ -730,8 +769,9 @@ const SpeechEngine = {
     warn.hidden = hasNative || this.mode === 'mp3';
   },
 
-  // Cycle through available voice modes when user clicks the indicator
   cycleMode() {
+    ensureAudio();
+    if (this.mode === 'detecting') return;
     const modes = [];
     if (this.mp3Available) modes.push('mp3');
     if (this.ttsAvailable) {
@@ -741,13 +781,10 @@ const SpeechEngine = {
       modes.push(hasNative ? 'tts' : 'tts-nonnative');
     }
     modes.push('silent');
-
     const idx = modes.indexOf(this.mode);
     this.mode = modes[(idx + 1) % modes.length];
     this._showModeIndicator(this.mode);
     this._updateWarning();
-
-    // Quick audio test when switching to a mode
     if (this.mode === 'tts' || this.mode === 'tts-nonnative') {
       this.synth.cancel();
       const u = new SpeechSynthesisUtterance(
@@ -761,26 +798,29 @@ const SpeechEngine = {
     }
   },
 
+  // say() — if detection is still running, wait for it; otherwise play immediately
   say(key, overridePriority) {
     const entry = t('voice', key);
     if (!entry || !entry.text) return;
     const priority = overridePriority ?? entry.priority ?? 'normal';
-
-    // Try MP3 first
-    if (this.mode === 'mp3') {
-      const played = AudioPlayer.play(currentLang, key, priority);
-      if (played) return;
-      // MP3 for this key missing — fall through to TTS
+    if (this.mode === 'detecting' && _audioInitPromise) {
+      _audioInitPromise.then(() => this._play(key, entry, priority));
+      return;
     }
+    this._play(key, entry, priority);
+  },
 
+  _play(key, entry, priority) {
+    // MP3 first
+    if (this.mode === 'mp3') {
+      if (AudioPlayer.play(currentLang, key, priority)) return;
+    }
     // TTS fallback
     if (this.mode === 'silent') return;
     if (this.mode !== 'tts' && this.mode !== 'tts-nonnative' && this.mode !== 'mp3') return;
     if (!this.voice) return;
-
     if (priority === 'high') this.synth.cancel();
     else if (priority === 'low' && this.synth.speaking) return;
-
     const u = new SpeechSynthesisUtterance(entry.text);
     u.voice = this.voice;
     u.lang = t('ui', 'voice_lang');
@@ -848,13 +888,20 @@ const VoiceTiming = {
       const resp = await fetch('audio/durations.json');
       if (resp.ok) { this.durations = await resp.json(); return; }
     } catch {}
+    // XHR fallback for file:// protocol (async, not blocking)
     try {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'audio/durations.json', false);
-      xhr.send();
-      if (xhr.status === 200 || xhr.status === 0) {
-        this.durations = JSON.parse(xhr.responseText);
-      }
+      await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'audio/durations.json', true);
+        xhr.onload = () => {
+          if (xhr.status === 200 || xhr.status === 0) {
+            this.durations = JSON.parse(xhr.responseText);
+          }
+          resolve();
+        };
+        xhr.onerror = resolve;
+        xhr.send();
+      });
     } catch {}
   },
 
@@ -1099,8 +1146,12 @@ const MetronomeEngine = {
   nextBeat: 0,
   timerId: null,
   beatCount: 0,
+  _animTimers: [],
+  _running: false,
 
   start(audioCtx) {
+    if (this._running) this.stop(); // A4: prevent orphaned schedule loop
+    this._running = true;
     this.ctx = audioCtx;
     this.nextBeat = audioCtx.currentTime + 0.05;
     this.beatCount = 0;
@@ -1108,6 +1159,7 @@ const MetronomeEngine = {
   },
 
   _schedule() {
+    if (!this._running) return;
     while (this.nextBeat < this.ctx.currentTime + 0.2) {
       this._tick(this.nextBeat);
       this.nextBeat += 60 / this.bpm;
@@ -1117,6 +1169,7 @@ const MetronomeEngine = {
   },
 
   _tick(time) {
+    if (!this._running) return;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.connect(gain); gain.connect(this.ctx.destination);
@@ -1124,37 +1177,44 @@ const MetronomeEngine = {
     gain.gain.setValueAtTime(0.20, time);
     gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
     osc.start(time); osc.stop(time + 0.09);
-    // Animate metro circle
-    const bc = this.beatCount;
-    setTimeout(() => {
+    const delay = Math.max(0, (time - this.ctx.currentTime) * 1000);
+    const t1 = setTimeout(() => {
+      if (!this._running) return;
       const circle = document.getElementById('metro-circle');
       if (circle) {
         circle.style.animation = 'none';
         circle.offsetHeight;
         circle.style.animation = 'metro-pulse ' + (60 / this.bpm) + 's ease-out 1';
       }
-      // Animate bars
       const bars = document.querySelectorAll('.mbar');
       const heights = [6, 10, 18, 10, 6];
       bars.forEach((b, i) => {
         b.style.height = (heights[i] * 1.8) + 'px';
         b.style.background = '#3b82f6';
       });
-      setTimeout(() => {
+      const t2 = setTimeout(() => {
+        if (!this._running) return;
         bars.forEach((b, i) => { b.style.height = heights[i] + 'px'; b.style.background = '#1e3a5f'; });
       }, 100);
-    }, Math.max(0, (time - this.ctx.currentTime) * 1000));
+      this._animTimers.push(t2);
+    }, delay);
+    this._animTimers.push(t1);
   },
 
   setBpm(bpm) {
     this.bpm = bpm;
-    document.getElementById('metro-bpm-display').textContent = bpm + ' BPM';
-    document.getElementById('metro-bpm-value').textContent = bpm;
+    const display = document.getElementById('metro-bpm-display');
+    const value = document.getElementById('metro-bpm-value');
+    if (display) display.textContent = bpm + ' BPM';
+    if (value) value.textContent = bpm;
   },
 
   stop() {
+    this._running = false;
     clearTimeout(this.timerId);
     this.timerId = null;
+    this._animTimers.forEach(t => clearTimeout(t));
+    this._animTimers = [];
   },
 };
 
@@ -1343,7 +1403,6 @@ const state = {
   pad1: false,
   pad2: false,
   powered: false,
-  shockReady: false,
   shockCount: 0,
   cprPresses: 0,
   cprCycles: 0,
@@ -1364,7 +1423,6 @@ const state = {
 };
 
 function transitionTo(newPhase) {
-  const prev = state.phase;
   state.phase = newPhase;
 
   // Clean up i-button blink
@@ -1410,7 +1468,6 @@ function transitionTo(newPhase) {
       state.powered = false;
       state.pad1 = false;
       state.pad2 = false;
-      state.shockReady = false;
       state.shockCount = 0;
       state.cprPresses = 0;
       state.cprCycles = 0;
@@ -1422,6 +1479,9 @@ function transitionTo(newPhase) {
       state.joulesToDeliver = 150;
       clearInterval(state.cprTimerInterval);
       clearInterval(state.scenarioTimerInterval);
+      clearInterval(state._beepInterval);
+      clearInterval(state._chargeInterval);
+      clearTimeout(state._pad1PromptTimer);
       MetronomeEngine.stop();
       SpeechEngine.synth.cancel();
 
@@ -1463,9 +1523,7 @@ function transitionTo(newPhase) {
       state.scenarioTimerInterval = setInterval(() => {
         if (!state.sessionStart) return;
         const s = Math.floor((Date.now() - state.sessionStart) / 1000);
-        const mm = String(Math.floor(s / 60)).padStart(2, '0');
-        const ss = String(s % 60).padStart(2, '0');
-        document.getElementById('scenario-status').textContent = t('ui', 'scenario_running') + ' \u00B7 ' + mm + ':' + ss;
+        document.getElementById('scenario-status').textContent = t('ui', 'scenario_running') + ' \u00B7 ' + formatTime(s);
       }, 500);
 
       setTimeout(() => {
@@ -1514,14 +1572,6 @@ function transitionTo(newPhase) {
       break;
     }
 
-    case 'PAD_PROMPT_2': {
-      // This state is kept for compatibility but works same as PAD_PROMPT
-      // connectPad() handles both states identically
-      ledReady.classList.add('green');
-      ledReadyS.classList.add('green');
-      break;
-    }
-
     case 'ANALYZING': {
       ledReady.classList.add('yellow-blink');
       ledReadyS.classList.add('yellow-blink');
@@ -1536,8 +1586,9 @@ function transitionTo(newPhase) {
 
       // Analysis beeps
       let beepCount = 0;
-      const beepInterval = setInterval(() => {
-        if (beepCount >= 4 || state.phase !== 'ANALYZING') { clearInterval(beepInterval); return; }
+      clearInterval(state._beepInterval);
+      state._beepInterval = setInterval(() => {
+        if (beepCount >= 4 || state.phase !== 'ANALYZING') { clearInterval(state._beepInterval); return; }
         AudioEngine.beep(1000, 0.2, 'square', 0.25);
         beepCount++;
       }, 400);
@@ -1633,12 +1684,13 @@ function transitionTo(newPhase) {
       const chargeDur = VoiceTiming.seconds(shockKey) || 7; // seconds
       AudioEngine.sweep(200, 2000, chargeDur, 'sawtooth', 0.22);
       const chargeStep = 100 / (chargeDur * 10); // 100% / (dur * 10 steps/s)
-      const chargeInterval = setInterval(() => {
-        if (state.phase !== 'SHOCK_CHARGING') { clearInterval(chargeInterval); return; }
+      clearInterval(state._chargeInterval);
+      state._chargeInterval = setInterval(() => {
+        if (state.phase !== 'SHOCK_CHARGING') { clearInterval(state._chargeInterval); return; }
         progress += chargeStep;
         fill.style.width = Math.min(progress, 100) + '%';
         if (progress >= 100) {
-          clearInterval(chargeInterval);
+          clearInterval(state._chargeInterval);
           transitionTo('SHOCK_READY');
         }
       }, 100);
@@ -1667,7 +1719,6 @@ function transitionTo(newPhase) {
 
     case 'SHOCK_DELIVERED': {
       state.shockCount++;
-      state.shockReady = false;
 
       // Flash
       const flash = document.getElementById('shock-flash');
@@ -1820,6 +1871,7 @@ function transitionTo(newPhase) {
 //  J. UI Controller
 // ═══════════════════════════════════════════════════════════
 function pressPower() {
+  ensureAudio();
   if (state.phase === 'IDLE') {
     transitionTo('BOOTING');
   } else {
@@ -1834,12 +1886,14 @@ function pressInfo() {
 }
 
 function pressShock() {
+  ensureAudio();
   if (state.phase !== 'SHOCK_READY') return;
   transitionTo('SHOCK_DELIVERED');
 }
 
 // Pad mode: adult vs child electrode placement
 function setPadMode(mode) {
+  ensureAudio();
   const isChild = (mode === 'child');
   document.getElementById('pad-svg-adult').classList.toggle('active', !isChild);
   document.getElementById('pad-svg-child').classList.toggle('active', isChild);
@@ -1859,38 +1913,31 @@ function _padId(n) {
 }
 
 function connectPad(n) {
-  // Accept pads in IDLE (before power on), PAD_PROMPT, or PAD_PROMPT_2
-  const allowed = ['IDLE', 'PAD_PROMPT', 'PAD_PROMPT_2'];
+  ensureAudio();
+  // Accept pads in IDLE (before power on) or PAD_PROMPT
+  const allowed = ['IDLE', 'PAD_PROMPT'];
   if (!allowed.includes(state.phase)) return;
 
   const ids = _padId(n);
   const alreadyPlaced = (n === 1) ? state.pad1 : state.pad2;
   if (alreadyPlaced) return;
 
+  // B1: Clear pad prompt timer regardless of which pad is placed
+  clearTimeout(state._pad1PromptTimer);
+
   const isPrePlacement = (state.phase === 'IDLE');
 
-  // Place this pad visually
-  if (n === 1) {
-    state.pad1 = true;
-    clearTimeout(state._pad1PromptTimer);
-    document.getElementById(ids.zone).classList.add('placed');
-    document.getElementById('conn-left').classList.add('placed');
-    document.getElementById(ids.cable).setAttribute('stroke', '#22c55e');
-    if (!isPrePlacement) {
-      SpeechEngine.say('pad1_ok', 'high');
-      addLog('pad1_placed', 'info');
-      document.getElementById('main-instruction').textContent = t('voice', 'pad1_ok')?.text || '';
-    }
-  } else {
-    state.pad2 = true;
-    document.getElementById(ids.zone).classList.add('placed');
-    document.getElementById('conn-right').classList.add('placed');
-    document.getElementById(ids.cable).setAttribute('stroke', '#22c55e');
-    if (!isPrePlacement) {
-      SpeechEngine.say('pad2_ok', 'high');
-      addLog('pad2_placed', 'info');
-      document.getElementById('main-instruction').textContent = t('voice', 'pad2_ok')?.text || '';
-    }
+  // Place this pad visually (C2: unified pad logic)
+  const padKey = n === 1 ? 'pad1' : 'pad2';
+  const connId = n === 1 ? 'conn-left' : 'conn-right';
+  state[padKey] = true;
+  document.getElementById(ids.zone).classList.add('placed');
+  document.getElementById(connId).classList.add('placed');
+  document.getElementById(ids.cable).setAttribute('stroke', '#22c55e');
+  if (!isPrePlacement) {
+    SpeechEngine.say(padKey + '_ok', 'high');
+    addLog(padKey + '_placed', 'info');
+    document.getElementById('main-instruction').textContent = t('voice', padKey + '_ok')?.text || '';
   }
 
   // If device is off (IDLE), just visual placement — no transitions
@@ -1902,7 +1949,7 @@ function connectPad(n) {
   // Both pads placed? → go to ANALYZING after voice finishes
   if (state.pad1 && state.pad2) {
     setTimeout(() => {
-      if (state.phase === 'PAD_PROMPT' || state.phase === 'PAD_PROMPT_2') {
+      if (state.phase === 'PAD_PROMPT') {
         transitionTo('ANALYZING');
       }
     }, okDelay);
@@ -1911,7 +1958,7 @@ function connectPad(n) {
     const missingPad = state.pad1 ? 2 : 1;
     const promptKey = missingPad === 1 ? 'pad1_prompt' : 'pad2_prompt';
     setTimeout(() => {
-      if ((state.phase === 'PAD_PROMPT' || state.phase === 'PAD_PROMPT_2')
+      if ((state.phase === 'PAD_PROMPT')
           && !(state.pad1 && state.pad2)) {
         SpeechEngine.say(promptKey);
         document.getElementById('main-instruction').textContent = t('voice', promptKey)?.text || '';
@@ -1921,6 +1968,7 @@ function connectPad(n) {
 }
 
 function doCompress() {
+  ensureAudio();
   if (state.phase !== 'CPR_ACTIVE') return;
   state.cprPresses++;
   state.compressionTimes.push(performance.now());
@@ -1933,6 +1981,7 @@ function doCompress() {
 }
 
 function doBreaths() {
+  ensureAudio();
   if (state.phase !== 'CPR_BREATHS') return;
   clearTimeout(state.breathsTimeout);
   state.cprCycles++;
@@ -1959,9 +2008,7 @@ function updateCprDisplay() {
 function updateCprTimer() {
   if (!state.cprStart) return;
   const s = Math.floor((Date.now() - state.cprStart) / 1000);
-  const mm = String(Math.floor(s / 60)).padStart(2, '0');
-  const ss = String(s % 60).padStart(2, '0');
-  document.getElementById('cpr-elapsed').textContent = mm + ':' + ss;
+  document.getElementById('cpr-elapsed').textContent = formatTime(s);
 }
 
 function selectScenario(id) {
@@ -1985,7 +2032,7 @@ function applyScenario() {
     state.scenario = generateScenario();
   } else {
     const sc = ScenarioLoader.get(id);
-    state.scenario = sc ? { ...sc } : { ...SCENARIOS_FALLBACK[id] };
+    state.scenario = sc ? { ...sc } : { ...(SCENARIOS_FALLBACK[id] || SCENARIOS_FALLBACK['S1']) };
   }
   // Auto-switch pad mode based on scenario
   setPadMode(state.scenario.pediatric ? 'child' : 'adult');
@@ -2023,9 +2070,7 @@ function calcAvgRate(times) {
 function showResults() {
   renderUI();
   const totalSec = state.sessionStart ? Math.floor((Date.now() - state.sessionStart) / 1000) : 0;
-  const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
-  const ss = String(totalSec % 60).padStart(2, '0');
-  document.getElementById('val-time').textContent = mm + ':' + ss;
+  document.getElementById('val-time').textContent = formatTime(totalSec);
   document.getElementById('val-shocks').textContent = state.shockCount;
   document.getElementById('val-cpr').textContent = state.totalCycles;
   document.getElementById('val-rate').textContent = calcAvgRate(state.compressionTimes) + ' /min';
@@ -2063,6 +2108,32 @@ function setSkin(id) {
     .forEach(b => b.classList.toggle('active', b.dataset.skin === id));
   EcgEngine.resize();
 }
+
+// ═══════════════════════════════════════════════════════════
+//  Manual modal
+// ═══════════════════════════════════════════════════════════
+function openManualModal() {
+  renderUI();
+  const body = document.getElementById('manual-body');
+  const text = t('ui', 'manual_body');
+  body.innerHTML = '';
+  const ol = document.createElement('ol');
+  text.split('\n').forEach(line => {
+    const li = document.createElement('li');
+    li.textContent = line.replace(/^\d+\.\s*/, '');
+    ol.appendChild(li);
+  });
+  body.appendChild(ol);
+  document.getElementById('manual-modal').hidden = false;
+  document.getElementById('manual-close').focus();
+}
+function closeManualModal() {
+  document.getElementById('manual-modal').hidden = true;
+  document.getElementById('btn-manual').focus();
+}
+document.getElementById('manual-modal').addEventListener('click', e => {
+  if (e.target.id === 'manual-modal') closeManualModal();
+});
 
 // ═══════════════════════════════════════════════════════════
 //  Donate modal
@@ -2104,14 +2175,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // 5. Init TTS
   SpeechEngine.init();
 
-  // 6. AudioContext + voice detection after user gesture
-  document.addEventListener('click', () => {
-    if (!AudioEngine.ctx) {
-      AudioEngine.init();
-      MetronomeEngine.ctx = AudioEngine.ctx;
-      SpeechEngine.unlockAndDetect();
-    }
-  }, { once: true });
+  // 6. AudioContext + MP3 detection after first user gesture
+  document.addEventListener('click', () => ensureAudio(), { once: true });
 
   // 7. Keyboard shortcuts
   document.addEventListener('keydown', handleKeydown);
@@ -2120,6 +2185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function handleKeydown(e) {
   // Escape closes modals
   if (e.key === 'Escape') {
+    if (!document.getElementById('manual-modal').hidden) { closeManualModal(); return; }
     if (!document.getElementById('donate-modal').hidden) { closeDonateModal(); return; }
     if (!document.getElementById('result-modal').hidden) { resetSession(); return; }
   }
