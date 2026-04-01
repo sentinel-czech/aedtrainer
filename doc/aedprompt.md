@@ -3228,11 +3228,11 @@ Předdefinované scénáře jako JS objekt:
 const SCENARIOS = {
   S1: { rhythm: 'VF',  shockable: true,  shockSuccess: true,  rosc_after: 1, pediatric: false },
   S2: { rhythm: 'VF',  shockable: true,  shockSuccess: false, rosc_after: 3, pediatric: false },
-  S3: { rhythm: 'PEA', shockable: false, shockSuccess: false, rosc_after: 2, pediatric: false },
-  S4: { rhythm: 'ASY', shockable: false, shockSuccess: false, rosc_after: 3, pediatric: false },
+  S3: { rhythm: 'PEA', shockable: false, rosc_cpr_cycles: 3, pediatric: false },  // ROSC po 3 cyklech KPR
+  S4: { rhythm: 'ASY', shockable: false, rosc_cpr_cycles: 0, pediatric: false },  // bez ROSC
   S5: { rhythm: 'VF',  shockable: true,  shockSuccess: true,  rosc_after: 1, pediatric: true  },
-  S6: { rhythm: 'VF',  shockable: true,  shockSuccess: true,  rosc_after: 2, pediatric: false,
-        cpr_first: true },  // přidá stav CPR_FIRST před ANALYZING
+  S6: { rhythm: 'VF',  shockable: true,  shockSuccess: true,  rosc_after: 2, pediatric: false },
+        // cpr_first neimplementován — efekt simulován přes rosc_after: 2 (1. výboj selže)
 };
 ```
 
