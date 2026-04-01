@@ -296,7 +296,7 @@
 
   <footer id="site-footer">
     <a href="https://4dive.cz" target="_blank">4dive.cz</a> &middot;
-    <a href="https://diveidda.com/cs" target="_blank">diveidda.com/cs</a> &middot; 2026
+    <a href="https://diveidda.com/cs" target="_blank">diveidda.com/cs</a> &middot; 2026 <span id="app-version"></span>
   </footer>
 
   <!-- 5. JAVASCRIPT -->
@@ -2180,6 +2180,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 7. Keyboard shortcuts
   document.addEventListener('keydown', handleKeydown);
+
+  // 8. App version from Last-Modified header
+  fetch('index.html', { method: 'HEAD' }).then(r => {
+    const lm = r.headers.get('Last-Modified');
+    if (lm) {
+      const el = document.getElementById('app-version');
+      if (el) el.textContent = '\u00B7 v' + new Date(lm).toISOString().slice(0, 16).replace('T', ' ');
+    }
+  }).catch(() => {});
 });
 
 function handleKeydown(e) {
