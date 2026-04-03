@@ -2111,7 +2111,7 @@ const LANG = {
       pad1_ok:         { text: 'Elektroda jedna přiložena.',                                                      priority: 'normal' },
       pad2_prompt:     { text: 'Přiložte elektrodu číslo dvě na levý bok pacienta, pod podpaží.',                priority: 'normal' },
       pad2_ok:         { text: 'Elektroda dvě přiložena.',                                                        priority: 'normal' },
-      analyzing:       { text: 'Nestýkejte se pacienta. Analyzuji srdeční rytmus.',                              priority: 'high'   },
+      analyzing:       { text: 'Nedotýkejte se pacienta. Analyzuji srdeční rytmus.',                              priority: 'high'   },
       analyze_wait:    { text: 'Nedotýkejte se pacienta.',                                                        priority: 'low'    },
       shock_advised:   { text: 'Výboj doporučen. Nabíjím. Všichni pryč od pacienta!',                            priority: 'high'   },
       shock_ready:     { text: 'Přístroj nabit. Stiskněte oranžové tlačítko výboje.',                            priority: 'normal' },
@@ -2124,7 +2124,7 @@ const LANG = {
       cpr_15:          { text: 'Patnáct stlačení – pokračujte!',                                                  priority: 'low'    },
       cpr_30:          { text: 'Třicet stlačení. Proveďte dva záchranné vdechy.',                                priority: 'high'   },
       breaths_done:    { text: 'Pokračujte v KPR.',                                                               priority: 'normal' },
-      reanalyze:       { text: 'Analyzuji srdeční rytmus. Nestýkejte se pacienta.',                              priority: 'high'   },
+      reanalyze:       { text: 'Analyzuji srdeční rytmus. Nedotýkejte se pacienta.',                              priority: 'high'   },
       rosc:            { text: 'Spontánní oběh obnoven. Zkontrolujte dýchání. Uložte do stabilizované polohy.', priority: 'high'   },
       continue_cpr:    { text: 'Pokračujte v KPR. Záchranná služba byla přivolána.',                             priority: 'normal' },
       shock2:          { text: 'Druhý výboj doporučen. Všichni pryč od pacienta!',                               priority: 'high'   },
@@ -2587,7 +2587,7 @@ const SpeechEngine = {
 <break time="200ms"/> Všichni pryč od pacienta!</speak>
 
 <!-- Důraz na klíčové slovo -->
-<speak>Nestýkejte se <emphasis level="strong">pacienta</emphasis>.</speak>
+<speak>Nedotýkejte se <emphasis level="strong">pacienta</emphasis>.</speak>
 
 <!-- Pomalejší tempo pro kritické instrukce -->
 <speak><prosody rate="slow">Třicet stlačení.</prosody>

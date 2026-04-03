@@ -39,7 +39,7 @@ Nazev kazdeho MP3 souboru odpovida klici v LANG objektu v `index.html`:
 ```
 audio/cs/start.mp3           ← "Pristroj zapnut. Prilozte elektrody..."
 audio/cs/pad1_prompt.mp3     ← "Prilozte elektrodu cislo jedna..."
-audio/cs/analyzing.mp3       ← "Nestykejte se pacienta. Analyzuji..."
+audio/cs/analyzing.mp3       ← "Nedotykejte se pacienta. Analyzuji..."
 audio/cs/shock_advised.mp3   ← "Vyboj doporucen. Nabijim..."
 ...
 ```

@@ -1,7 +1,7 @@
 {
   "cs": {
     "analyze_wait": 3.05,
-    "analyzing": 5.9,
+    "analyzing": 5.95,
     "breaths_done": 2.69,
     "continue_cpr": 6.0,
     "cpr_15": 3.14,
@@ -18,7 +18,7 @@
     "pad2_ok": 2.81,
     "pad2_prompt": 5.23,
     "pediatric_on": 6.05,
-    "reanalyze": 5.9,
+    "reanalyze": 5.95,
     "rosc": 8.83,
     "shock2": 5.54,
     "shock3": 5.69,
