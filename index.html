@@ -75,42 +75,66 @@
             <button class="pad-mode-btn" onclick="setPadMode('child')" data-i18n="pad_mode_child" data-mode="child">D\u00edt\u011b</button>
           </div>
           <!-- SVG Adult: antero-lateral placement -->
-          <svg viewBox="0 0 390 130" id="pad-svg-adult" class="pad-svg active">
-            <ellipse class="torso-head" cx="195" cy="22" rx="22" ry="20"/>
-            <path class="torso-body" d="M155,45 Q140,52 138,75 L136,125 Q160,132 195,132 Q230,132 254,125 L252,75 Q250,52 235,45 Q215,38 195,38 Q175,38 155,45 Z"/>
-            <path class="pad-cable" id="cable1" d="M162,125 C162,115 155,100 162,62" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
-            <path class="pad-cable" id="cable2" d="M244,125 C244,115 248,105 244,100" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
-            <rect class="pad-zone" id="pad1-zone" x="140" y="44" width="44" height="36" rx="6"
+          <svg viewBox="0 0 390 180" id="pad-svg-adult" class="pad-svg active">
+            <!-- Human silhouette from person.svg, scaled to fit -->
+            <g transform="translate(-21, 5) scale(2.1)">
+              <!-- Right pectoral — underline from chest edge to sternum -->
+              <path fill="none" stroke="#8892a0" stroke-width="1.5" d="M86,48 Q90,53 96,54 Q100,54 103,52"/>
+              <!-- Left pectoral — underline from chest edge to sternum -->
+              <path fill="none" stroke="#8892a0" stroke-width="1.5" d="M120,48 Q116,53 110,54 Q106,54 103,52"/>
+              <!-- Nipples -->
+              <circle cx="92" cy="50" r="1.2" fill="#8892a0"/>
+              <circle cx="114" cy="50" r="1.2" fill="#8892a0"/>
+              <!-- Abs lines — horizontal -->
+              <line x1="97" y1="64" x2="109" y2="64" stroke="#8892a0" stroke-width="1.5"/>
+              <line x1="97" y1="68" x2="109" y2="68" stroke="#8892a0" stroke-width="1.5"/>
+              <line x1="98" y1="72" x2="108" y2="72" stroke="#8892a0" stroke-width="1.5"/>
+              <line x1="99" y1="76" x2="107" y2="76" stroke="#8892a0" stroke-width="1.5"/>
+              <!-- Linea alba (vertical center) -->
+              <line x1="103" y1="52" x2="103" y2="78" stroke="#8892a0" stroke-width="1.5"/>
+              <!-- Body silhouette -->
+              <path class="person-silhouette" d="m 124.651,111.847 c 1.169,-9.53 -4.141,-22.308 -4.141,-22.308 -1.163,-5.2 0.542,-23.727 0.542,-23.727 2.381,3.705 2.29,10.245 2.29,10.245 -0.378,6.859 5.541,17.342 5.541,17.342 2.844,4.332 3.921,8.442 3.921,8.747 0,1.248 -0.273,4.269 -0.273,4.269 l 0.109,2.631 c 0.049,0.67 0.426,2.977 0.365,4.092 -0.444,6.862 0.646,5.571 0.646,5.571 0.92,0 1.931,-5.522 1.931,-5.522 0,1.424 -0.348,5.687 0.42,7.295 0.919,1.918 1.595,-0.329 1.607,-0.78 0.243,-8.737 0.768,-6.448 0.768,-6.448 0.511,7.088 1.139,8.689 2.265,8.135 0.853,-0.407 0.073,-8.506 0.073,-8.506 1.461,4.811 2.569,5.577 2.569,5.577 2.411,1.693 0.92,-2.983 0.585,-3.909 -1.784,-4.92 -1.839,-6.625 -1.839,-6.625 2.229,4.421 3.909,4.257 3.909,4.257 2.174,-0.694 -1.9,-6.954 -4.287,-9.953 -1.218,-1.528 -2.789,-3.574 -3.245,-4.789 -0.743,-2.058 -1.304,-8.674 -1.304,-8.674 -0.225,-7.807 -2.155,-11.198 -2.155,-11.198 -3.3,-5.282 -3.921,-15.135 -3.921,-15.135 l -0.146,-16.635 c -1.157,-11.347 -9.518,-11.429 -9.518,-11.429 -8.451,-1.258 -9.627,-3.988 -9.627,-3.988 -1.79,-2.576 -0.767,-7.514 -0.767,-7.514 1.485,-1.208 2.058,-4.415 2.058,-4.415 2.466,-1.891 2.345,-4.658 1.206,-4.628 -0.914,0.024 -0.707,-0.733 -0.707,-0.733 C 115.068,0.636 104.01,0 104.01,0 h -1.688 c 0,0 -11.063,0.636 -9.523,13.089 0,0 0.207,0.758 -0.715,0.733 -1.136,-0.03 -1.242,2.737 1.215,4.628 0,0 0.572,3.206 2.058,4.415 0,0 1.023,4.938 -0.767,7.514 0,0 -1.172,2.73 -9.627,3.988 0,0 -8.375,0.082 -9.514,11.429 l -0.158,16.635 c 0,0 -0.609,9.853 -3.922,15.135 0,0 -1.921,3.392 -2.143,11.198 0,0 -0.563,6.616 -1.303,8.674 -0.451,1.209 -2.021,3.255 -3.249,4.789 -2.408,2.993 -6.455,9.24 -4.29,9.953 0,0 1.689,0.164 3.909,-4.257 0,0 -0.046,1.693 -1.827,6.625 -0.35,0.914 -1.839,5.59 0.573,3.909 0,0 1.117,-0.767 2.569,-5.577 0,0 -0.779,8.099 0.088,8.506 1.133,0.555 1.751,-1.047 2.262,-8.135 0,0 0.524,-2.289 0.767,6.448 0.012,0.451 0.673,2.698 1.596,0.78 0.779,-1.608 0.429,-5.864 0.429,-7.295 0,0 0.999,5.522 1.933,5.522 0,0 1.099,1.291 0.648,-5.571 -0.073,-1.121 0.32,-3.422 0.369,-4.092 l 0.106,-2.631 c 0,0 -0.274,-3.014 -0.274,-4.269 0,-0.311 1.078,-4.415 3.921,-8.747 0,0 5.913,-10.488 5.532,-17.342 0,0 -0.082,-6.54 2.299,-10.245 0,0 1.69,18.526 0.545,23.727 0,0 -5.319,12.778 -4.146,22.308 13.161,0.044 18.078,0.566 42.968,0.003 z"/>
+            </g>
+            <!-- Cables from connector to pads -->
+            <path class="pad-cable" id="cable1" d="M172,178 C171,160 170,130 172,95" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
+            <path class="pad-cable" id="cable2" d="M232,178 C232,170 232,162 232,156" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
+            <!-- Pad 1: right subclavicular (below right clavicle) -->
+            <rect class="pad-zone" id="pad1-zone" x="151" y="82" width="42" height="30" rx="5"
                   onclick="connectPad(1)" ontouchend="connectPad(1); event.preventDefault()"/>
-            <rect class="pad-zone" id="pad2-zone" x="222" y="82" width="44" height="36" rx="6"
+            <text class="pad-num" x="165" y="103" font-size="11">1</text>
+            <!-- Pad 2: left mid-axillary, below nipple -->
+            <rect class="pad-zone" id="pad2-zone" x="214" y="126" width="36" height="30" rx="5"
                   onclick="connectPad(2)" ontouchend="connectPad(2); event.preventDefault()"/>
-            <text class="pad-num" x="155" y="68" font-size="11">1</text>
-            <text class="pad-num" x="237" y="106" font-size="11">2</text>
+            <text class="pad-num" x="224" y="147" font-size="11">2</text>
           </svg>
           <!-- SVG Child: antero-posterior placement (smaller body) -->
-          <svg viewBox="0 0 390 130" id="pad-svg-child" class="pad-svg">
-            <!-- Child torso (smaller, front view) -->
-            <ellipse class="torso-head" cx="140" cy="20" rx="16" ry="15"/>
-            <path class="torso-body" d="M115,38 Q105,44 103,60 L101,105 Q118,112 140,112 Q162,112 179,105 L177,60 Q175,44 165,38 Q152,32 140,32 Q128,32 115,38 Z"/>
-            <!-- Pad 1: front center chest (sternum) -->
-            <path class="pad-cable" id="cable1-child" d="M140,112 C140,105 138,95 140,70" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
-            <rect class="pad-zone" id="pad1-zone-child" x="118" y="52" width="44" height="32" rx="6"
-                  onclick="connectPad(1)" ontouchend="connectPad(1); event.preventDefault()"/>
-            <text class="pad-num" x="133" y="73" font-size="10">1</text>
-            <text class="pad-label-hint" x="140" y="95" font-size="7" text-anchor="middle" fill="#6b7280">FRONT</text>
-            <!-- Back view silhouette (right side) -->
-            <ellipse class="torso-head" cx="290" cy="20" rx="16" ry="15"/>
-            <path class="torso-body-back" d="M265,38 Q255,44 253,60 L251,105 Q268,112 290,112 Q312,112 329,105 L327,60 Q325,44 315,38 Q302,32 290,32 Q278,32 265,38 Z"/>
-            <!-- Pad 2: back between shoulder blades -->
-            <path class="pad-cable" id="cable2-child" d="M290,112 C290,105 288,90 290,65" fill="none" stroke="#1a2535" stroke-width="3" stroke-linecap="round"/>
-            <rect class="pad-zone" id="pad2-zone-child" x="268" y="48" width="44" height="32" rx="6"
-                  onclick="connectPad(2)" ontouchend="connectPad(2); event.preventDefault()"/>
-            <text class="pad-num" x="283" y="69" font-size="10">2</text>
-            <text class="pad-label-hint" x="290" y="95" font-size="7" text-anchor="middle" fill="#6b7280">BACK</text>
-            <!-- Arrow indicating front→back -->
-            <path d="M185,55 L230,55" fill="none" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+          <svg viewBox="0 0 390 145" id="pad-svg-child" class="pad-svg">
             <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4b5563"/></marker></defs>
-            <text x="207" y="50" font-size="7" text-anchor="middle" fill="#4b5563" font-family="var(--font-device)">&#8635;</text>
+            <!-- ── FRONT view (left) — person.svg scaled down ── -->
+            <g transform="translate(-49, 5) scale(1.35)">
+              <path class="person-silhouette" d="m 124.651,111.847 c 1.169,-9.53 -4.141,-22.308 -4.141,-22.308 -1.163,-5.2 0.542,-23.727 0.542,-23.727 2.381,3.705 2.29,10.245 2.29,10.245 -0.378,6.859 5.541,17.342 5.541,17.342 2.844,4.332 3.921,8.442 3.921,8.747 0,1.248 -0.273,4.269 -0.273,4.269 l 0.109,2.631 c 0.049,0.67 0.426,2.977 0.365,4.092 -0.444,6.862 0.646,5.571 0.646,5.571 0.92,0 1.931,-5.522 1.931,-5.522 0,1.424 -0.348,5.687 0.42,7.295 0.919,1.918 1.595,-0.329 1.607,-0.78 0.243,-8.737 0.768,-6.448 0.768,-6.448 0.511,7.088 1.139,8.689 2.265,8.135 0.853,-0.407 0.073,-8.506 0.073,-8.506 1.461,4.811 2.569,5.577 2.569,5.577 2.411,1.693 0.92,-2.983 0.585,-3.909 -1.784,-4.92 -1.839,-6.625 -1.839,-6.625 2.229,4.421 3.909,4.257 3.909,4.257 2.174,-0.694 -1.9,-6.954 -4.287,-9.953 -1.218,-1.528 -2.789,-3.574 -3.245,-4.789 -0.743,-2.058 -1.304,-8.674 -1.304,-8.674 -0.225,-7.807 -2.155,-11.198 -2.155,-11.198 -3.3,-5.282 -3.921,-15.135 -3.921,-15.135 l -0.146,-16.635 c -1.157,-11.347 -9.518,-11.429 -9.518,-11.429 -8.451,-1.258 -9.627,-3.988 -9.627,-3.988 -1.79,-2.576 -0.767,-7.514 -0.767,-7.514 1.485,-1.208 2.058,-4.415 2.058,-4.415 2.466,-1.891 2.345,-4.658 1.206,-4.628 -0.914,0.024 -0.707,-0.733 -0.707,-0.733 C 115.068,0.636 104.01,0 104.01,0 h -1.688 c 0,0 -11.063,0.636 -9.523,13.089 0,0 0.207,0.758 -0.715,0.733 -1.136,-0.03 -1.242,2.737 1.215,4.628 0,0 0.572,3.206 2.058,4.415 0,0 1.023,4.938 -0.767,7.514 0,0 -1.172,2.73 -9.627,3.988 0,0 -8.375,0.082 -9.514,11.429 l -0.158,16.635 c 0,0 -0.609,9.853 -3.922,15.135 0,0 -1.921,3.392 -2.143,11.198 0,0 -0.563,6.616 -1.303,8.674 -0.451,1.209 -2.021,3.255 -3.249,4.789 -2.408,2.993 -6.455,9.24 -4.29,9.953 0,0 1.689,0.164 3.909,-4.257 0,0 -0.046,1.693 -1.827,6.625 -0.35,0.914 -1.839,5.59 0.573,3.909 0,0 1.117,-0.767 2.569,-5.577 0,0 -0.779,8.099 0.088,8.506 1.133,0.555 1.751,-1.047 2.262,-8.135 0,0 0.524,-2.289 0.767,6.448 0.012,0.451 0.673,2.698 1.596,0.78 0.779,-1.608 0.429,-5.864 0.429,-7.295 0,0 0.999,5.522 1.933,5.522 0,0 1.099,1.291 0.648,-5.571 -0.073,-1.121 0.32,-3.422 0.369,-4.092 l 0.106,-2.631 c 0,0 -0.274,-3.014 -0.274,-4.269 0,-0.311 1.078,-4.415 3.921,-8.747 0,0 5.913,-10.488 5.532,-17.342 0,0 -0.082,-6.54 2.299,-10.245 0,0 1.69,18.526 0.545,23.727 0,0 -5.319,12.778 -4.146,22.308 13.161,0.044 18.078,0.566 42.968,0.003 z"/>
+            </g>
+            <!-- Pad 1: front center chest (sternum) -->
+            <path class="pad-cable" id="cable1-child" d="M90,140 C90,120 89,85 90,62" fill="none" stroke="#1a2535" stroke-width="2.5" stroke-linecap="round"/>
+            <rect class="pad-zone" id="pad1-zone-child" x="71" y="52" width="38" height="24" rx="5"
+                  onclick="connectPad(1)" ontouchend="connectPad(1); event.preventDefault()"/>
+            <text class="pad-num" x="84" y="69" font-size="9">1</text>
+            <text class="pad-label-hint" x="90" y="132" font-size="7" text-anchor="middle" fill="#6b7280">FRONT</text>
+
+            <!-- Arrow -->
+            <path d="M175,80 L195,80" fill="none" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+            <text x="185" y="75" font-size="7" text-anchor="middle" fill="#4b5563" font-family="var(--font-device)">&#8635;</text>
+
+            <!-- ── BACK view (right) — same silhouette, dashed stroke ── -->
+            <g transform="translate(161, 5) scale(1.35)">
+              <path class="person-silhouette-back" d="m 124.651,111.847 c 1.169,-9.53 -4.141,-22.308 -4.141,-22.308 -1.163,-5.2 0.542,-23.727 0.542,-23.727 2.381,3.705 2.29,10.245 2.29,10.245 -0.378,6.859 5.541,17.342 5.541,17.342 2.844,4.332 3.921,8.442 3.921,8.747 0,1.248 -0.273,4.269 -0.273,4.269 l 0.109,2.631 c 0.049,0.67 0.426,2.977 0.365,4.092 -0.444,6.862 0.646,5.571 0.646,5.571 0.92,0 1.931,-5.522 1.931,-5.522 0,1.424 -0.348,5.687 0.42,7.295 0.919,1.918 1.595,-0.329 1.607,-0.78 0.243,-8.737 0.768,-6.448 0.768,-6.448 0.511,7.088 1.139,8.689 2.265,8.135 0.853,-0.407 0.073,-8.506 0.073,-8.506 1.461,4.811 2.569,5.577 2.569,5.577 2.411,1.693 0.92,-2.983 0.585,-3.909 -1.784,-4.92 -1.839,-6.625 -1.839,-6.625 2.229,4.421 3.909,4.257 3.909,4.257 2.174,-0.694 -1.9,-6.954 -4.287,-9.953 -1.218,-1.528 -2.789,-3.574 -3.245,-4.789 -0.743,-2.058 -1.304,-8.674 -1.304,-8.674 -0.225,-7.807 -2.155,-11.198 -2.155,-11.198 -3.3,-5.282 -3.921,-15.135 -3.921,-15.135 l -0.146,-16.635 c -1.157,-11.347 -9.518,-11.429 -9.518,-11.429 -8.451,-1.258 -9.627,-3.988 -9.627,-3.988 -1.79,-2.576 -0.767,-7.514 -0.767,-7.514 1.485,-1.208 2.058,-4.415 2.058,-4.415 2.466,-1.891 2.345,-4.658 1.206,-4.628 -0.914,0.024 -0.707,-0.733 -0.707,-0.733 C 115.068,0.636 104.01,0 104.01,0 h -1.688 c 0,0 -11.063,0.636 -9.523,13.089 0,0 0.207,0.758 -0.715,0.733 -1.136,-0.03 -1.242,2.737 1.215,4.628 0,0 0.572,3.206 2.058,4.415 0,0 1.023,4.938 -0.767,7.514 0,0 -1.172,2.73 -9.627,3.988 0,0 -8.375,0.082 -9.514,11.429 l -0.158,16.635 c 0,0 -0.609,9.853 -3.922,15.135 0,0 -1.921,3.392 -2.143,11.198 0,0 -0.563,6.616 -1.303,8.674 -0.451,1.209 -2.021,3.255 -3.249,4.789 -2.408,2.993 -6.455,9.24 -4.29,9.953 0,0 1.689,0.164 3.909,-4.257 0,0 -0.046,1.693 -1.827,6.625 -0.35,0.914 -1.839,5.59 0.573,3.909 0,0 1.117,-0.767 2.569,-5.577 0,0 -0.779,8.099 0.088,8.506 1.133,0.555 1.751,-1.047 2.262,-8.135 0,0 0.524,-2.289 0.767,6.448 0.012,0.451 0.673,2.698 1.596,0.78 0.779,-1.608 0.429,-5.864 0.429,-7.295 0,0 0.999,5.522 1.933,5.522 0,0 1.099,1.291 0.648,-5.571 -0.073,-1.121 0.32,-3.422 0.369,-4.092 l 0.106,-2.631 c 0,0 -0.274,-3.014 -0.274,-4.269 0,-0.311 1.078,-4.415 3.921,-8.747 0,0 5.913,-10.488 5.532,-17.342 0,0 -0.082,-6.54 2.299,-10.245 0,0 1.69,18.526 0.545,23.727 0,0 -5.319,12.778 -4.146,22.308 13.161,0.044 18.078,0.566 42.968,0.003 z"/>
+            </g>
+            <!-- Pad 2: back between shoulder blades -->
+            <path class="pad-cable" id="cable2-child" d="M300,140 C300,120 299,85 300,62" fill="none" stroke="#1a2535" stroke-width="2.5" stroke-linecap="round"/>
+            <rect class="pad-zone" id="pad2-zone-child" x="281" y="52" width="38" height="24" rx="5"
+                  onclick="connectPad(2)" ontouchend="connectPad(2); event.preventDefault()"/>
+            <text class="pad-num" x="294" y="69" font-size="9">2</text>
+            <text class="pad-label-hint" x="300" y="132" font-size="7" text-anchor="middle" fill="#6b7280">BACK</text>
           </svg>
         </div>
 
@@ -220,6 +244,9 @@
             <div id="cpr-progress-fill"></div>
           </div>
           <button id="btn-compress" onclick="doCompress()" ontouchend="doCompress(); event.preventDefault()" data-i18n="btn_compress">&#8595; STLACENI HRUDNIKU &#8595;</button>
+          <div id="breaths-countdown" hidden>
+            <div id="breaths-countdown-fill"></div>
+          </div>
           <button id="btn-breaths" onclick="doBreaths()" ontouchend="doBreaths(); event.preventDefault()" data-i18n="btn_breaths">&#10003; DVA VDECHY PROVEDENY</button>
         </div>
 
@@ -251,6 +278,7 @@
         <tr><td data-i18n="result_avg_rate"></td><td id="val-rate"></td></tr>
         <tr><td data-i18n="result_longest_pause"></td><td id="val-pause"></td></tr>
       </table>
+      <div id="result-eval"></div>
       <button onclick="resetSession()" data-i18n="btn_restart"></button>
       <button onclick="window.print()" data-i18n="btn_print"></button>
     </div>
@@ -317,6 +345,8 @@ const LANG = {
       pad2_label: 'ELEKTRODA 2',
       pad1_hint: 'Prav\u00e1 kl\u00ed\u010dn\u00ed kost',
       pad2_hint: 'Lev\u00fd bok \u2013 axila',
+      pad1_hint_child: 'Hrudn\u00ed kost \u2013 vp\u0159edu',
+      pad2_hint_child: 'Mezi lopatkami \u2013 vzadu',
       pad_mode_adult: 'Dosp\u011bl\u00fd',
       pad_mode_child: 'D\u00edt\u011b',
       scenario_random: '\uD83C\uDFB2 N\u00e1hodn\u00fd',
@@ -331,12 +361,20 @@ const LANG = {
       cpr_round_label: 'Kolo',
       btn_compress: '\u2193 STLA\u010cEN\u00cd HRUDN\u00cdKU \u2193',
       btn_breaths: '\u2713 DVA VDECHY PROVEDENY',
+      btn_initial_breath: '\u2713 VDECH PROVEDEN (%n/5)',
       result_title: 'V\u00ddSLEDKY TR\u00c9NINKU',
       result_time: 'Celkov\u00fd \u010das',
       result_shocks: 'V\u00fdboje pod\u00e1ny',
       result_cpr: 'KPR cykly',
       result_avg_rate: 'Pr\u016fm\u011brn\u00e1 frekvence',
       result_longest_pause: 'Nejdel\u0161\u00ed p\u0159eru\u0161en\u00ed KPR',
+      result_eval_title: 'Hodnocen\u00ed',
+      eval_rate_ok: 'Frekvence kompres\u00ed v norm\u011b (100\u2013120/min)',
+      eval_rate_warn: 'Frekvence kompres\u00ed mimo doporu\u010den\u00fd rozsah',
+      eval_pause_ok: 'P\u0159eru\u0161en\u00ed KPR v norm\u011b',
+      eval_pause_warn: 'P\u0159\u00edli\u0161 dlouh\u00e1 pauza mezi kompresemi',
+      eval_time_ok: 'Postup prob\u011bhl v p\u0159im\u011b\u0159en\u00e9m \u010dase',
+      eval_time_warn: 'Postup trval p\u0159\u00edli\u0161 dlouho',
       btn_restart: 'Za\u010d\u00edt znovu',
       btn_print: 'Vytisknout',
       log_title: 'Pr\u016fb\u011bh z\u00e1sahu',
@@ -354,7 +392,7 @@ const LANG = {
       resources_btn: 'Zdroje',
       manual_btn: 'N\u00e1vod',
       manual_title: 'Jak pou\u017e\u00edvat trena\u017e\u00e9r',
-      manual_body: '1. Vyberte typ AED (FRx / ZOLL / SAM) v horn\u00ed li\u0161t\u011b\n2. Klikn\u011bte na zelen\u00e9 tla\u010d\u00edtko ZAP/VYP pro zapnut\u00ed p\u0159\u00edstroje\n3. Klikn\u011bte postupn\u011b na elektrody (Elektroda 1, pak Elektroda 2) \u2014 simuluje p\u0159ilo\u017een\u00ed na pacienta\n4. P\u0159\u00edstroj automaticky analyzuje rytmus a ozn\u00e1m\u00ed, zda je v\u00fdboj doporu\u010den\n5. Pokud je v\u00fdboj doporu\u010den, stiskn\u011bte oran\u017eov\u00e9 tla\u010d\u00edtko V\u00ddBOJ\n6. Stla\u010den\u00ed hrudn\u00edku (KPR) simulujte kliknut\u00edm na tla\u010d\u00edtko nebo kl\u00e1vesou Mezern\u00edk\n7. Sledujte hlasov\u00e9 pokyny p\u0159\u00edstroje',
+      manual_body: '1. Vyberte typ AED (FRx / ZOLL / SAM) v horn\u00ed li\u0161t\u011b\n2. Zvolte re\u017eim Dosp\u011bl\u00fd nebo D\u00edt\u011b \u2014 p\u0159ep\u00edna\u010d je na p\u0159\u00edstroji u elektrod. Po zapnut\u00ed ji\u017e nelze m\u011bnit\n3. Klikn\u011bte na zelen\u00e9 tla\u010d\u00edtko ZAP/VYP pro zapnut\u00ed p\u0159\u00edstroje\n4. Klikn\u011bte postupn\u011b na elektrody (Elektroda 1, pak Elektroda 2) \u2014 simuluje p\u0159ilo\u017een\u00ed na pacienta\n5. P\u0159\u00edstroj automaticky analyzuje rytmus a ozn\u00e1m\u00ed, zda je v\u00fdboj doporu\u010den\n6. Pokud je v\u00fdboj doporu\u010den, stiskn\u011bte oran\u017eov\u00e9 tla\u010d\u00edtko V\u00ddBOJ\n7. KPR: Dosp\u011bl\u00fd \u2014 30 stla\u010den\u00ed + 2 vdechy (4 cykly). D\u00edt\u011b \u2014 5 \u00favodn\u00edch vdech\u016f, pak 15 stla\u010den\u00ed + 2 vdechy (8 cykl\u016f)\n8. Stla\u010den\u00ed simulujte kliknut\u00edm na tla\u010d\u00edtko nebo kl\u00e1vesou Mezern\u00edk, vdechy kl\u00e1vesou Enter\n9. Sledujte hlasov\u00e9 pokyny p\u0159\u00edstroje a metronom pro spr\u00e1vnou frekvenci',
       donate_btn: 'Podpo\u0159it',
       donate_title: 'Podpo\u0159te projekt',
       donate_desc: 'Tento trena\u017e\u00e9r vznikl jako open-source n\u00e1stroj pro v\u00fdcvik prvn\u00ed pomoci. Pokud v\u00e1m pomohl nebo ho pou\u017e\u00edv\u00e1te ve v\u00fduce, zva\u017ete symbolick\u00fd p\u0159\u00edsp\u011bvek na jeho dal\u0161\u00ed rozvoj.',
@@ -377,10 +415,15 @@ const LANG = {
       shock_clear:     { text: 'V\u0161ichni pry\u010d!', priority: 'high' },
       shock_delivered: { text: 'V\u00fdboj pod\u00e1n. Okam\u017eit\u011b zahajte KPR.', priority: 'high' },
       no_shock:        { text: 'V\u00fdboj nedoporu\u010den. Okam\u017eit\u011b zahajte KPR \u2013 t\u0159icet stla\u010den\u00ed, dva vdechy.', priority: 'high' },
+      no_shock_child:  { text: 'V\u00fdboj nedoporu\u010den. Prove\u010fte p\u011bt \u00favodn\u00edch vdech\u016f, pot\u00e9 patn\u00e1ct stla\u010den\u00ed a dva vdechy.', priority: 'high' },
       cpr_start:       { text: 'Zahajte KPR. Stla\u010dujte hrudn\u00edk do hloubky p\u011bt a\u017e \u0161est centimetr\u016f.', priority: 'normal' },
+      cpr_start_child: { text: 'Prove\u010fte p\u011bt \u00favodn\u00edch z\u00e1chrann\u00fdch vdech\u016f. Pot\u00e9 stla\u010dujte hrudn\u00edk do hloubky asi p\u011bt centimetr\u016f, t\u0159etinu hloubky hrudn\u00edku.', priority: 'normal' },
+      initial_breaths: { text: 'Prove\u010fte p\u011bt \u00favodn\u00edch z\u00e1chrann\u00fdch vdech\u016f.', priority: 'high' },
       cpr_depth:       { text: 'Stla\u010dujte pevn\u011bji \u2013 minim\u00e1ln\u011b p\u011bt centimetr\u016f.', priority: 'normal' },
+      cpr_depth_child: { text: 'Stla\u010dujte pevn\u011bji \u2013 t\u0159etina hloubky hrudn\u00edku.', priority: 'normal' },
       cpr_rate:        { text: 'Udr\u017eujte frekvenci sto a\u017e sto dvacet stla\u010den\u00ed za minutu.', priority: 'normal' },
       cpr_15:          { text: 'Patn\u00e1ct stla\u010den\u00ed \u2013 pokra\u010dujte!', priority: 'low' },
+      cpr_15_done:     { text: 'Patn\u00e1ct stla\u010den\u00ed. Prove\u010fte dva z\u00e1chrann\u00e9 vdechy.', priority: 'high' },
       cpr_30:          { text: 'T\u0159icet stla\u010den\u00ed. Prove\u010fte dva z\u00e1chrann\u00e9 vdechy.', priority: 'high' },
       breaths_done:    { text: 'Pokra\u010dujte v KPR.', priority: 'normal' },
       reanalyze:       { text: 'Analyzuji srde\u010dn\u00ed rytmus. Nedot\u00fdkejte se pacienta.', priority: 'high' },
@@ -389,7 +432,7 @@ const LANG = {
       shock2:          { text: 'Druh\u00fd v\u00fdboj doporu\u010den. V\u0161ichni pry\u010d od pacienta!', priority: 'high' },
       shock3:          { text: 'T\u0159et\u00ed v\u00fdboj doporu\u010den. V\u0161ichni pry\u010d od pacienta!', priority: 'high' },
       low_battery:     { text: 'Baterie je slab\u00e1.', priority: 'low' },
-      pediatric_on:    { text: 'D\u011btsk\u00fd kl\u00ed\u010d vlo\u017een. Energie sn\u00ed\u017eena na pades\u00e1t joul\u016f.', priority: 'high' },
+      pediatric_on:    { text: 'D\u011btsk\u00fd kl\u00ed\u010d vlo\u017een. Energie sn\u00ed\u017eena na pades\u00e1t d\u017eaul\u016f.', priority: 'high' },
       off:             { text: 'P\u0159\u00edstroj vypnut.', priority: 'high' },
       end_session:     { text: 'Tr\u00e9nink ukon\u010den. Prohl\u00e9dn\u011bte si v\u00fdsledky.', priority: 'high' },
     },
@@ -404,7 +447,8 @@ const LANG = {
       charging: 'Nab\u00edj\u00edm\u2026',
       shock_label: 'V\u00fdboj #%n pod\u00e1n (%j J)',
       cpr_start: 'KPR zah\u00e1jena',
-      cpr_cycle: 'KPR kolo %n/4',
+      initial_breaths: '\u00davodn\u00edch 5 vdech\u016f provedeno',
+      cpr_cycle: 'KPR kolo %n',
       reanalyze: 'Re-anal\u00fdza',
       rosc: 'ROSC \u2013 ob\u011bh obnoven',
       powered_off: 'P\u0159\u00edstroj vypnut',
@@ -423,6 +467,8 @@ const LANG = {
       pad2_label: 'PAD 2',
       pad1_hint: 'Right upper chest',
       pad2_hint: 'Left side \u2013 apex',
+      pad1_hint_child: 'Sternum \u2013 front',
+      pad2_hint_child: 'Between shoulder blades \u2013 back',
       pad_mode_adult: 'Adult',
       pad_mode_child: 'Child',
       scenario_random: '\uD83C\uDFB2 Random',
@@ -437,12 +483,20 @@ const LANG = {
       cpr_round_label: 'Round',
       btn_compress: '\u2193 CHEST COMPRESSION \u2193',
       btn_breaths: '\u2713 TWO RESCUE BREATHS DONE',
+      btn_initial_breath: '\u2713 BREATH GIVEN (%n/5)',
       result_title: 'TRAINING RESULTS',
       result_time: 'Total time',
       result_shocks: 'Shocks delivered',
       result_cpr: 'CPR cycles',
       result_avg_rate: 'Average rate',
       result_longest_pause: 'Longest CPR pause',
+      result_eval_title: 'Evaluation',
+      eval_rate_ok: 'Compression rate within range (100\u2013120/min)',
+      eval_rate_warn: 'Compression rate outside recommended range',
+      eval_pause_ok: 'CPR pauses within limits',
+      eval_pause_warn: 'Too long pause between compressions',
+      eval_time_ok: 'Procedure completed in reasonable time',
+      eval_time_warn: 'Procedure took too long',
       btn_restart: 'Start again',
       btn_print: 'Print',
       log_title: 'Incident timeline',
@@ -460,7 +514,7 @@ const LANG = {
       resources_btn: 'Resources',
       manual_btn: 'Manual',
       manual_title: 'How to use the trainer',
-      manual_body: '1. Select the AED type (FRx / ZOLL / SAM) in the top bar\n2. Click the green ON/OFF button to power on the device\n3. Click the electrode pads one by one (Pad 1, then Pad 2) \u2014 this simulates placing them on the patient\n4. The device automatically analyzes the rhythm and announces whether a shock is advised\n5. If a shock is advised, press the orange SHOCK button\n6. Simulate chest compressions (CPR) by clicking the button or pressing the Spacebar\n7. Follow the voice prompts from the device',
+      manual_body: '1. Select the AED type (FRx / ZOLL / SAM) in the top bar\n2. Choose Adult or Child mode \u2014 the switch is on the device near the electrodes. Cannot be changed after powering on\n3. Click the green ON/OFF button to power on the device\n4. Click the electrode pads one by one (Pad 1, then Pad 2) \u2014 this simulates placing them on the patient\n5. The device automatically analyzes the rhythm and announces whether a shock is advised\n6. If a shock is advised, press the orange SHOCK button\n7. CPR: Adult \u2014 30 compressions + 2 breaths (4 cycles). Child \u2014 5 initial breaths, then 15 compressions + 2 breaths (8 cycles)\n8. Simulate compressions by clicking the button or pressing Spacebar, breaths with Enter\n9. Follow the voice prompts from the device and the metronome for correct rate',
       donate_btn: 'Support',
       donate_title: 'Support the project',
       donate_desc: 'This trainer was created as an open-source tool for first aid training. If it helped you or you use it in teaching, consider a small contribution towards its further development.',
@@ -483,10 +537,15 @@ const LANG = {
       shock_clear:     { text: 'Stand clear!', priority: 'high' },
       shock_delivered: { text: 'Shock delivered. Start CPR immediately.', priority: 'high' },
       no_shock:        { text: 'No shock advised. Start CPR immediately \u2013 thirty compressions, two breaths.', priority: 'high' },
+      no_shock_child:  { text: 'No shock advised. Give five initial breaths, then fifteen compressions and two breaths.', priority: 'high' },
       cpr_start:       { text: 'Begin CPR. Push down five to six centimetres on the chest.', priority: 'normal' },
+      cpr_start_child: { text: 'Give five initial rescue breaths. Then push down about five centimetres, one third of the chest depth.', priority: 'normal' },
+      initial_breaths: { text: 'Give five initial rescue breaths.', priority: 'high' },
       cpr_depth:       { text: 'Push harder \u2013 at least five centimetres.', priority: 'normal' },
+      cpr_depth_child: { text: 'Push harder \u2013 one third of chest depth.', priority: 'normal' },
       cpr_rate:        { text: 'Maintain a rate of one hundred to one hundred and twenty per minute.', priority: 'normal' },
       cpr_15:          { text: 'Fifteen compressions \u2013 keep going!', priority: 'low' },
+      cpr_15_done:     { text: 'Fifteen compressions. Give two rescue breaths.', priority: 'high' },
       cpr_30:          { text: 'Thirty compressions. Give two rescue breaths.', priority: 'high' },
       breaths_done:    { text: 'Continue CPR.', priority: 'normal' },
       reanalyze:       { text: 'Analyzing heart rhythm. Do not touch the patient.', priority: 'high' },
@@ -510,7 +569,8 @@ const LANG = {
       charging: 'Charging\u2026',
       shock_label: 'Shock #%n delivered (%j J)',
       cpr_start: 'CPR started',
-      cpr_cycle: 'CPR round %n/4',
+      initial_breaths: 'Initial 5 breaths given',
+      cpr_cycle: 'CPR round %n',
       reanalyze: 'Re-analysis',
       rosc: 'ROSC \u2013 circulation restored',
       powered_off: 'Unit powered off',
@@ -794,14 +854,17 @@ const SpeechEngine = {
       u.rate = 0.88; u.pitch = 0.82; u.volume = 1.0;
       this.synth.speak(u);
     } else if (this.mode === 'mp3') {
-      AudioPlayer.play(currentLang, 'pad1_ok', 'high');
+      AudioPlayer.play(currentLang, 'start', 'high');
     }
   },
 
   // say() — if detection is still running, wait for it; otherwise play immediately
+  lastVoiceKey: null,
+
   say(key, overridePriority) {
     const entry = t('voice', key);
     if (!entry || !entry.text) return;
+    this.lastVoiceKey = key;
     const priority = overridePriority ?? entry.priority ?? 'normal';
     if (this.mode === 'detecting' && _audioInitPromise) {
       _audioInitPromise.then(() => this._play(key, entry, priority));
@@ -914,9 +977,10 @@ const VoiceTiming = {
     // Fallback defaults (worst-case CZ durations + buffer)
     const fallback = {
       start: 6500, pad1_prompt: 5000, pad1_ok: 3200, pad2_prompt: 5600,
-      pad2_ok: 3200, analyzing: 6300, no_shock: 7500, shock_advised: 7400,
-      shock_ready: 6000, shock_clear: 2500, shock_delivered: 5500,
-      cpr_start: 7100, cpr_30: 5700, breaths_done: 3100, reanalyze: 6300,
+      pad2_ok: 3200, analyzing: 6300, no_shock: 7500, no_shock_child: 7500,
+      shock_advised: 7400, shock_ready: 6000, shock_clear: 2500, shock_delivered: 5500,
+      cpr_start: 7100, cpr_start_child: 8500, initial_breaths: 4500,
+      cpr_15_done: 5700, cpr_30: 5700, breaths_done: 3100, reanalyze: 6300,
       rosc: 9200, end_session: 5700,
     };
     return (fallback[key] || 5000) + extraBuffer;
@@ -1146,16 +1210,20 @@ const MetronomeEngine = {
   nextBeat: 0,
   timerId: null,
   beatCount: 0,
-  _animTimers: [],
   _running: false,
+  _nextVisualBeat: 0,
+  _rafId: null,
+  _barResetTimer: null,
 
   start(audioCtx) {
     if (this._running) this.stop(); // A4: prevent orphaned schedule loop
     this._running = true;
     this.ctx = audioCtx;
     this.nextBeat = audioCtx.currentTime + 0.05;
+    this._nextVisualBeat = this.nextBeat;
     this.beatCount = 0;
     this._schedule();
+    this._visualLoop();
   },
 
   _schedule() {
@@ -1177,28 +1245,40 @@ const MetronomeEngine = {
     gain.gain.setValueAtTime(0.20, time);
     gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
     osc.start(time); osc.stop(time + 0.09);
-    const delay = Math.max(0, (time - this.ctx.currentTime) * 1000);
-    const t1 = setTimeout(() => {
-      if (!this._running) return;
-      const circle = document.getElementById('metro-circle');
-      if (circle) {
-        circle.style.animation = 'none';
-        circle.offsetHeight;
-        circle.style.animation = 'metro-pulse ' + (60 / this.bpm) + 's ease-out 1';
+  },
+
+  // rAF-based visual sync — checks audio clock each frame for tight sync
+  _visualLoop() {
+    if (!this._running) return;
+    const now = this.ctx.currentTime;
+    if (now >= this._nextVisualBeat) {
+      this._flashVisual();
+      // Advance to next beat (skip missed beats)
+      while (this._nextVisualBeat <= now) {
+        this._nextVisualBeat += 60 / this.bpm;
       }
-      const bars = document.querySelectorAll('.mbar');
-      const heights = [6, 10, 18, 10, 6];
-      bars.forEach((b, i) => {
-        b.style.height = (heights[i] * 1.8) + 'px';
-        b.style.background = '#3b82f6';
-      });
-      const t2 = setTimeout(() => {
-        if (!this._running) return;
-        bars.forEach((b, i) => { b.style.height = heights[i] + 'px'; b.style.background = '#1e3a5f'; });
-      }, 100);
-      this._animTimers.push(t2);
-    }, delay);
-    this._animTimers.push(t1);
+    }
+    this._rafId = requestAnimationFrame(() => this._visualLoop());
+  },
+
+  _flashVisual() {
+    const circle = document.getElementById('metro-circle');
+    if (circle) {
+      circle.style.animation = 'none';
+      circle.offsetHeight;
+      circle.style.animation = 'metro-pulse ' + (60 / this.bpm) + 's ease-out 1';
+    }
+    const bars = document.querySelectorAll('.mbar');
+    const heights = [6, 10, 18, 10, 6];
+    bars.forEach((b, i) => {
+      b.style.height = (heights[i] * 1.8) + 'px';
+      b.style.background = '#3b82f6';
+    });
+    clearTimeout(this._barResetTimer);
+    this._barResetTimer = setTimeout(() => {
+      if (!this._running) return;
+      bars.forEach((b, i) => { b.style.height = heights[i] + 'px'; b.style.background = '#1e3a5f'; });
+    }, 100);
   },
 
   setBpm(bpm) {
@@ -1213,8 +1293,9 @@ const MetronomeEngine = {
     this._running = false;
     clearTimeout(this.timerId);
     this.timerId = null;
-    this._animTimers.forEach(t => clearTimeout(t));
-    this._animTimers = [];
+    cancelAnimationFrame(this._rafId);
+    this._rafId = null;
+    clearTimeout(this._barResetTimer);
   },
 };
 
@@ -1417,7 +1498,8 @@ const state = {
   iButtonFlashInterval: null,
   iButtonFlashEnd: null,
   _pad1PromptTimer: null,
-  cprTimerInterval: null,
+  cprTimerRunning: false,
+  initialBreathCount: 0,
   scenarioTimerInterval: null,
   breathsTimeout: null,
 };
@@ -1476,8 +1558,9 @@ function transitionTo(newPhase) {
       state.cprStart = null;
       state.compressionTimes = [];
       state.pediatric = false;
+      state.initialBreathCount = 0;
       state.joulesToDeliver = 150;
-      clearInterval(state.cprTimerInterval);
+      state.cprTimerRunning = false;
       clearInterval(state.scenarioTimerInterval);
       clearInterval(state._beepInterval);
       clearInterval(state._chargeInterval);
@@ -1495,6 +1578,8 @@ function transitionTo(newPhase) {
       cprControls.classList.remove('visible');
       btnCompress.classList.remove('visible');
       btnBreaths.classList.remove('visible');
+      document.getElementById('breaths-countdown').hidden = true;
+      document.getElementById('breaths-countdown-fill').classList.remove('counting');
       metronome.classList.remove('visible');
       mainInst.textContent = '';
       document.getElementById('scenario-status').textContent = t('ui', 'scenario_ready');
@@ -1603,8 +1688,9 @@ function transitionTo(newPhase) {
         } else {
           if (state.scenario.rhythm === 'PEA') addLog('pea_detected', 'warn');
           else addLog('asy_detected', 'warn');
-          SpeechEngine.say('no_shock', 'high');
-          mainInst.textContent = t('voice', 'no_shock')?.text || '';
+          const noShockKey = state.pediatric ? 'no_shock_child' : 'no_shock';
+          SpeechEngine.say(noShockKey, 'high');
+          mainInst.textContent = t('voice', noShockKey)?.text || '';
           // Wait for 'no_shock' voice before CPR_PROMPT
           setTimeout(() => {
             if (state.phase === 'ANALYZING') transitionTo('CPR_PROMPT');
@@ -1654,8 +1740,9 @@ function transitionTo(newPhase) {
         } else {
           if (sc.rhythm === 'PEA') addLog('pea_detected', 'warn');
           else addLog('asy_detected', 'warn');
-          SpeechEngine.say('no_shock', 'high');
-          mainInst.textContent = t('voice', 'no_shock')?.text || '';
+          const noShockKey = state.pediatric ? 'no_shock_child' : 'no_shock';
+          SpeechEngine.say(noShockKey, 'high');
+          mainInst.textContent = t('voice', noShockKey)?.text || '';
           // 'no_shock' CZ ~7.1s, EN ~7.2s — wait before CPR_PROMPT
           setTimeout(() => {
             if (state.phase === 'REANALYZE') transitionTo('CPR_PROMPT');
@@ -1776,15 +1863,34 @@ function transitionTo(newPhase) {
         cprUnderlying = 'asystola';
       }
       EcgEngine.setMode('flatline', cprUnderlying);
-      SpeechEngine.say('cpr_start', 'high');
+      const cprKey = state.pediatric ? 'cpr_start_child' : 'cpr_start';
+      SpeechEngine.say(cprKey, 'high');
       mainInst.classList.add('ok');
-      mainInst.textContent = t('voice', 'cpr_start')?.text || '';
+      mainInst.textContent = t('voice', cprKey)?.text || '';
       addLog('cpr_start', 'info');
 
-      // Transition to CPR_ACTIVE after cpr_start voice finishes
+      // Transition after cpr_start voice finishes
       setTimeout(() => {
-        if (state.phase === 'CPR_PROMPT') transitionTo('CPR_ACTIVE');
-      }, VoiceTiming.delay('cpr_start'));
+        if (state.phase === 'CPR_PROMPT') {
+          transitionTo(state.pediatric ? 'INITIAL_BREATHS' : 'CPR_ACTIVE');
+        }
+      }, VoiceTiming.delay(cprKey));
+      break;
+    }
+
+    case 'INITIAL_BREATHS': {
+      // Pediatric: 5 initial rescue breaths before compressions
+      ledReady.classList.add('green');
+      ledReadyS.classList.add('green');
+      state.initialBreathCount = 0;
+      SpeechEngine.say('initial_breaths', 'high');
+      cprControls.classList.add('visible');
+      btnCompress.classList.remove('visible');
+      btnBreaths.classList.add('visible');
+      btnBreaths.textContent = t('ui', 'btn_initial_breath').replace('%n', '0');
+      mainInst.classList.add('ok');
+      mainInst.textContent = t('voice', 'initial_breaths')?.text || '';
+      addLog('cpr_start', 'info');
       break;
     }
 
@@ -1805,9 +1911,9 @@ function transitionTo(newPhase) {
       updateCprDisplay();
       addLog('cpr_cycle', 'info', { n: state.cprCycles + 1 });
 
-      // Start CPR timer
-      clearInterval(state.cprTimerInterval);
-      state.cprTimerInterval = setInterval(updateCprTimer, 500);
+      // Start CPR timer (rAF-based for consistent display)
+      state.cprTimerRunning = true;
+      requestAnimationFrame(updateCprTimer);
 
       // Start metronome
       if (AudioEngine.ctx) MetronomeEngine.start(AudioEngine.ctx);
@@ -1819,12 +1925,22 @@ function transitionTo(newPhase) {
       ledReadyS.classList.add('green');
       // During breaths pause: show underlying rhythm without compression artifacts
       EcgEngine.setMode(EcgEngine.underlyingRhythm);
-      SpeechEngine.say('cpr_30', 'high');
+      const breathsKey = state.pediatric ? 'cpr_15_done' : 'cpr_30';
+      SpeechEngine.say(breathsKey, 'high');
       MetronomeEngine.stop();
       btnCompress.classList.remove('visible');
       btnBreaths.classList.add('visible');
+      btnBreaths.textContent = t('ui', 'btn_breaths');
       mainInst.classList.add('ok');
-      mainInst.textContent = t('voice', 'cpr_30')?.text || '';
+      mainInst.textContent = t('voice', breathsKey)?.text || '';
+
+      // Breath countdown bar
+      const bcd = document.getElementById('breaths-countdown');
+      const bcf = document.getElementById('breaths-countdown-fill');
+      bcd.hidden = false;
+      bcf.classList.remove('counting');
+      bcf.offsetHeight; // force reflow
+      bcf.classList.add('counting');
 
       // Auto-continue after 15s
       state.breathsTimeout = setTimeout(() => {
@@ -1834,7 +1950,7 @@ function transitionTo(newPhase) {
     }
 
     case 'END_SESSION': {
-      clearInterval(state.cprTimerInterval);
+      state.cprTimerRunning = false;
       clearInterval(state.scenarioTimerInterval);
       MetronomeEngine.stop();
       cprControls.classList.remove('visible');
@@ -1882,7 +1998,16 @@ function pressPower() {
 }
 
 function pressInfo() {
-  // Info button provides additional guidance
+  if (!state.powered) return;
+  ensureAudio();
+  // Replay the last voice instruction
+  if (SpeechEngine.lastVoiceKey) {
+    SpeechEngine.say(SpeechEngine.lastVoiceKey, 'high');
+  }
+  // Visual feedback — brief flash on info button
+  const btn = document.getElementById('btn-info');
+  btn.classList.add('blink');
+  setTimeout(() => btn.classList.remove('blink'), 600);
 }
 
 function pressShock() {
@@ -1893,6 +2018,7 @@ function pressShock() {
 
 // Pad mode: adult vs child electrode placement
 function setPadMode(mode) {
+  if (state.powered) return;
   ensureAudio();
   const isChild = (mode === 'child');
   document.getElementById('pad-svg-adult').classList.toggle('active', !isChild);
@@ -1901,6 +2027,11 @@ function setPadMode(mode) {
     b.classList.toggle('active', b.dataset.mode === mode));
   state.pediatric = isChild;
   state.joulesToDeliver = isChild ? 50 : 150;
+  // Update connector hints for adult/child placement
+  const h1 = document.querySelector('#conn-left .conn-hint');
+  const h2 = document.querySelector('#conn-right .conn-hint');
+  if (h1) h1.textContent = t('ui', isChild ? 'pad1_hint_child' : 'pad1_hint');
+  if (h2) h2.textContent = t('ui', isChild ? 'pad2_hint_child' : 'pad2_hint');
   if (isChild && state.powered) SpeechEngine.say('pediatric_on', 'high');
 }
 
@@ -1976,19 +2107,35 @@ function doCompress() {
   updateCprDisplay();
   document.getElementById('zoll-cpr-num').textContent = state.cprPresses;
 
-  if (state.cprPresses === 15) SpeechEngine.say('cpr_15');
-  if (state.cprPresses >= 30) transitionTo('CPR_BREATHS');
+  const maxPresses = state.pediatric ? 15 : 30;
+  if (!state.pediatric && state.cprPresses === 15) SpeechEngine.say('cpr_15');
+  if (state.pediatric && state.cprPresses === 8) SpeechEngine.say('cpr_15');
+  if (state.cprPresses >= maxPresses) transitionTo('CPR_BREATHS');
 }
 
 function doBreaths() {
   ensureAudio();
+  // Handle initial breaths for pediatric CPR
+  if (state.phase === 'INITIAL_BREATHS') {
+    state.initialBreathCount = (state.initialBreathCount || 0) + 1;
+    const btn = document.getElementById('btn-breaths');
+    btn.textContent = t('ui', 'btn_initial_breath').replace('%n', state.initialBreathCount);
+    if (state.initialBreathCount >= 5) {
+      addLog('initial_breaths', 'info');
+      transitionTo('CPR_ACTIVE');
+    }
+    return;
+  }
   if (state.phase !== 'CPR_BREATHS') return;
   clearTimeout(state.breathsTimeout);
+  document.getElementById('breaths-countdown').hidden = true;
+  document.getElementById('breaths-countdown-fill').classList.remove('counting');
   state.cprCycles++;
   state.totalCycles++;
 
-  if (state.cprCycles >= 4) {
-    // Last cycle done — go to re-analysis. Skip 'breaths_done', say 'reanalyze' directly
+  const maxCycles = state.pediatric ? 8 : 4;
+  if (state.cprCycles >= maxCycles) {
+    // Last cycle done — go to re-analysis
     state.cprCycles = 0;
     transitionTo('REANALYZE');
   } else {
@@ -1998,17 +2145,21 @@ function doBreaths() {
 }
 
 function updateCprDisplay() {
+  const maxPresses = state.pediatric ? 15 : 30;
+  const maxCycles = state.pediatric ? 8 : 4;
   document.getElementById('cpr-num').textContent = state.cprPresses;
+  document.getElementById('cpr-denom').textContent = '/' + maxPresses;
   document.getElementById('cpr-progress-fill').style.width =
-    Math.min(state.cprPresses / 30 * 100, 100) + '%';
+    Math.min(state.cprPresses / maxPresses * 100, 100) + '%';
   document.getElementById('cpr-round-val').textContent =
-    (state.cprCycles + 1) + '/4';
+    (state.cprCycles + 1) + '/' + maxCycles;
 }
 
 function updateCprTimer() {
-  if (!state.cprStart) return;
+  if (!state.cprStart || !state.cprTimerRunning) return;
   const s = Math.floor((Date.now() - state.cprStart) / 1000);
   document.getElementById('cpr-elapsed').textContent = formatTime(s);
+  requestAnimationFrame(updateCprTimer);
 }
 
 function selectScenario(id) {
@@ -2081,6 +2232,51 @@ function showResults() {
     if (gap > longest) longest = gap;
   }
   document.getElementById('val-pause').textContent = longest > 0 ? (longest / 1000).toFixed(1) + ' s' : '-';
+
+  // Evaluation
+  const evalDiv = document.getElementById('result-eval');
+  evalDiv.replaceChildren();
+  const evalTitle = document.createElement('h3');
+  evalTitle.textContent = t('ui', 'result_eval_title');
+  evalDiv.appendChild(evalTitle);
+
+  const avgRate = calcAvgRate(state.compressionTimes);
+  const checks = [];
+
+  // Rate check (100-120 is ideal)
+  if (avgRate > 0) {
+    const rateOk = avgRate >= 100 && avgRate <= 120;
+    checks.push({
+      ok: rateOk,
+      text: t('ui', rateOk ? 'eval_rate_ok' : 'eval_rate_warn')
+    });
+  }
+
+  // Pause check (> 10s is critical)
+  if (longest > 0) {
+    const pauseOk = longest <= 10000;
+    checks.push({
+      ok: pauseOk,
+      text: t('ui', pauseOk ? 'eval_pause_ok' : 'eval_pause_warn')
+    });
+  }
+
+  // Total time check (> 120s from start to first compression is slow)
+  if (totalSec > 0) {
+    const timeOk = totalSec <= 180;
+    checks.push({
+      ok: timeOk,
+      text: t('ui', timeOk ? 'eval_time_ok' : 'eval_time_warn')
+    });
+  }
+
+  checks.forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'eval-item ' + (c.ok ? 'eval-ok' : 'eval-warn');
+    item.textContent = (c.ok ? '\u2705 ' : '\u26A0\uFE0F ') + c.text;
+    evalDiv.appendChild(item);
+  });
+
   document.getElementById('result-modal').hidden = false;
   // Voice already played in END_SESSION — no duplicate call
 }
@@ -2101,6 +2297,7 @@ const SKINS = {
 
 function setSkin(id) {
   if (!SKINS[id]) return;
+  if (state.powered) return;
   document.body.className = document.body.className
     .replace(/skin-\w+/g, '').trim() + ' ' + SKINS[id].cls;
   state.activeSkin = id;
@@ -2208,7 +2405,7 @@ function handleKeydown(e) {
 
   // Enter = confirm current action
   if (e.key === 'Enter') {
-    if (state.phase === 'CPR_BREATHS') { doBreaths(); return; }
+    if (state.phase === 'CPR_BREATHS' || state.phase === 'INITIAL_BREATHS') { doBreaths(); return; }
     if (state.phase === 'SHOCK_READY') { pressShock(); return; }
   }
 

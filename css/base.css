@@ -31,6 +31,10 @@
    RESET & BASE
    ══════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+#app-container, #training-banner, #main-instruction, #event-log,
+#cpr-header, #scenario-status, #led-status, .frx-serial,
+.conn-labels, #metronome-section, #pad-diagram, #device-header,
+#site-bar { user-select: none; cursor: default; }
 html, body {
   min-width: 800px;
   overflow-x: auto;
@@ -282,10 +286,10 @@ body:has(#voice-warning:not([hidden])) #app-container {
 }
 .pad-mode-btn:hover { border-color: #6b7280; color: #d1d5db; }
 .pad-mode-btn.active { border-color: #22c55e; color: #86efac; }
-.pad-svg { display: none; width: 100%; max-height: 120px; }
+.pad-svg { display: none; width: 100%; max-height: 150px; }
 .pad-svg.active { display: block; }
-.torso-head, .torso-body { fill: none; stroke: #8892a0; stroke-width: 1.5; }
-.torso-body-back { fill: none; stroke: #8892a0; stroke-width: 1.5; stroke-dasharray: 4 2; }
+.person-silhouette { fill: none; stroke: #8892a0; stroke-width: 1.5; }
+.person-silhouette-back { fill: none; stroke: #8892a0; stroke-width: 1.5; stroke-dasharray: 4 2; opacity: 0.5; }
 .pad-zone {
   fill: #c8d0d8; stroke: #7a8898; stroke-width: 1.5;
   stroke-dasharray: 5 3; cursor: pointer; transition: fill 0.2s, stroke 0.2s;
@@ -570,6 +574,8 @@ body:has(#voice-warning:not([hidden])) #app-container {
 }
 #scenario-selector:focus { border-color: #4b9ef5; }
 body.aed-running #scenario-selector { opacity: 0.5; pointer-events: none; cursor: default; }
+body.aed-running .pad-mode-btn { opacity: 0.5; pointer-events: none; cursor: default; }
+body.aed-running .skin-btn { opacity: 0.5; pointer-events: none; cursor: default; }
 #btn-reset-scenario {
   background: #111827; border: 1px solid #374151; border-radius: 6px;
   color: #6b7280; font-size: 16px; padding: 4px 11px; cursor: pointer;
@@ -723,6 +729,15 @@ body.aed-running #scenario-status { color: #22c55e; }
 }
 #btn-compress.visible { display: block; }
 #btn-compress:active { background: #3a1a00; transform: scale(0.97); }
+#breaths-countdown {
+  width: 100%; height: 6px; background: #1a1200; border-radius: 3px;
+  overflow: hidden; margin-bottom: 4px;
+}
+#breaths-countdown-fill {
+  height: 100%; background: #22c55e; border-radius: 3px;
+  width: 100%; transition: width 15s linear;
+}
+#breaths-countdown-fill.counting { width: 0%; }
 #btn-breaths {
   width: 100%; min-height: 48px;
   background: #071a0a; border: 2px solid #166534; border-radius: 8px;
@@ -801,6 +816,18 @@ body.aed-running #scenario-status { color: #22c55e; }
   cursor: pointer; margin: 4px; transition: background 0.15s;
 }
 #result-content button:hover { background: #2563eb; color: #fff; }
+#result-eval {
+  margin: 10px 0 4px; text-align: left; font-size: 13px;
+}
+#result-eval h3 {
+  font-size: 14px; font-weight: 700; color: #94a3b8; margin-bottom: 6px;
+}
+.eval-item {
+  padding: 3px 0; display: flex; align-items: center; gap: 6px;
+}
+.eval-ok { color: #22c55e; }
+.eval-warn { color: #eab308; }
+.eval-bad { color: #ef4444; }
 
 #donate-close {
   position: absolute; top: 10px; right: 12px;
@@ -859,11 +886,28 @@ body.aed-running #scenario-status { color: #22c55e; }
    PRINT
    ══════════════════════════════════════════ */
 @media print {
+  *, *::before, *::after { box-shadow: none !important; }
+  body, html { background: #fff !important; color: #000 !important; min-width: 0 !important; overflow: visible !important; }
   #site-bar, #training-banner, #device-panel, #scenario-bar, #metronome-section,
-  #cpr-controls, #btn-donate, .skin-zone, .site-controls, #voice-warning { display: none !important; }
-  #app-container { display: block; width: 100%; height: auto; padding: 0; }
-  #result-modal { position: static; background: none; }
-  #result-content { max-width: 100%; border: none; }
+  #cpr-controls, #btn-donate, .skin-zone, .site-controls, #voice-warning,
+  #panel-tabs, #tab-scenario-info, #event-log, #donate-modal, #manual-modal,
+  #instruction-panel, #shock-flash, #site-footer { display: none !important; }
+  #app-container { display: block; width: 100%; height: auto; padding: 0; background: #fff !important; min-height: 0 !important; }
+  #result-modal { position: static !important; display: block !important; background: #fff !important;
+    inset: auto !important; padding: 0 !important; z-index: auto !important; }
+  #result-content { max-width: 100%; border: none; padding: 10px 20px; background: #fff !important;
+    border-radius: 0; }
+  #result-content button { display: none !important; }
+  #result-content h2 { color: #000; font-size: 20px; margin-bottom: 10px; }
+  #result-content table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  #result-content td { color: #000; border-bottom: 1px solid #ccc; padding: 6px 4px; font-size: 12px; }
+  #result-content td:last-child { color: #1a1a1a; }
+  #result-eval { color: #000; margin-top: 6px; }
+  #result-eval h3 { color: #333; font-size: 14px; margin-bottom: 4px; }
+  .eval-item { font-size: 12px; padding: 2px 0; }
+  .eval-ok { color: #16a34a !important; }
+  .eval-warn { color: #ca8a04 !important; }
+  .eval-bad { color: #dc2626 !important; }
 }
 
 /* ══════════════════════════════════════════
@@ -873,7 +917,7 @@ body.aed-running #scenario-status { color: #22c55e; }
 @media (min-width: 1100px) {
   #frx-body { padding: 16px 18px 20px 18px; gap: 10px; border-radius: 22px; }
   #ecg-canvas { height: 85px; }
-  .pad-svg { max-height: 140px; }
+  .pad-svg { max-height: 160px; }
   #btn-on { width: 100px; height: 100px; }
   #btn-shock { width: 100px; height: 100px; }
   #btn-info { width: 42px; height: 42px; }
@@ -885,7 +929,7 @@ body.aed-running #scenario-status { color: #22c55e; }
   #app-container { width: min(1400px, 96vw); }
   #frx-body { padding: 20px 22px 24px 22px; gap: 12px; }
   #ecg-canvas { height: 95px; }
-  .pad-svg { max-height: 155px; }
+  .pad-svg { max-height: 175px; }
   #btn-on, #btn-shock { width: 110px; height: 110px; }
   #btn-info { width: 46px; height: 46px; }
   #main-instruction { font-size: 20px; min-height: 90px; }

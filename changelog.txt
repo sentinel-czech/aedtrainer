@@ -1,0 +1,58 @@
+AED Trainer — Changelog
+=======================
+
+v1.2.0 — 2026-04-05
+--------------------
+### Pediatric CPR (15:2 ratio with initial breaths)
+- New INITIAL_BREATHS state: 5 rescue breaths before compressions (ERC pediatric guidelines)
+- Compression ratio: 15:2 for children (vs 30:2 for adults)
+- 8 CPR cycles per re-analysis (~2 min, same as adult 4×30:2)
+- Dynamic UI: counter shows /15, round shows /8 in child mode
+- New voice prompts (CZ+EN): initial_breaths, cpr_start_child, cpr_15_done, no_shock_child, cpr_depth_child
+- 10 new MP3 audio files generated (5 CZ + 5 EN)
+
+### Tester review fixes (12 items)
+1. Fixed Czech spelling: "joulů" → "džaulů" in pediatric voice prompt
+2. Breath countdown: visual progress bar (15s → 0%) during CPR_BREATHS phase
+3. Metronome sync: visual pulse via requestAnimationFrame synced to AudioContext clock
+4. Human body SVG: replaced with realistic silhouette from person.svg, with pectoral lines, nipples, and abdominal muscles
+5. Cursor: added user-select:none to all non-interactive simulator elements
+6. Adult/Child toggle: disabled after device power-on (CSS + JS guard)
+7. AED model switch: disabled after device power-on (CSS + JS guard)
+8. Info button: implemented — replays last voice instruction with visual feedback
+9. CPR timer: replaced setInterval(500ms) with requestAnimationFrame for consistent display
+10. Voice mode demo: changed MP3 demo from pad1_ok to start sound
+11. Print stylesheet: full white background, hidden footer/buttons/UI, single-page layout
+12. Training evaluation: rate, pause, and timing checks shown in results modal
+
+### Electrode label switching
+- Pad hints update when switching Adult/Child mode
+- Adult: "Right clavicle" / "Left side – axilla"
+- Child: "Sternum – front" / "Between shoulder blades – back"
+
+### Updated manual
+- Added Adult/Child mode selection instructions
+- Documented CPR differences (30:2 vs 5+15:2)
+- Added keyboard shortcuts (Space for compressions, Enter for breaths)
+
+v1.1.0 — 2026-03-28
+--------------------
+- Mobile audio support and code quality fixes
+- Updated scenario descriptions
+- Version display on last update
+- Footer license
+
+v1.0.1 — 2026-03-25
+--------------------
+- Fix charging bar animation
+- Fix CZ message: "nestykejte" → "nedotykejte"
+- Fix start symbol display
+
+v1.0.0 — 2026-03-20
+--------------------
+- Initial release
+- 6 training scenarios (S1-S6) + random
+- 3 AED skins: Philips FRx, ZOLL AED Plus, HeartSine SAM 360P
+- Bilingual CZ/EN with HD MP3 voices
+- EKG display, metronome, CPR counter
+- Offline-capable single-file web app
